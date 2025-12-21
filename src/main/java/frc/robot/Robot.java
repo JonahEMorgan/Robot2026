@@ -20,7 +20,7 @@ public class Robot extends TimedRobot {
 			Constants.ControllerConstants.kDriverControllerPort);
 
 	public Robot() {
-
+		BindDriveControls();
 	}
 
 	private void BindDriveControls() {

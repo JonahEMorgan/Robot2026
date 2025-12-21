@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -55,10 +54,15 @@ public class Constants {
 		public static final double kMetersPerMotorRotation = kWheelCircumference / kDriveGearRatio;
 
 		// https://docs.wpilib.org/en/latest/docs/software/basic-programming/coordinate-system.html
-		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
-		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
-		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
-		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+		public static final double kModuleDistFromCenter = Units.inchesToMeters(14.5); // Width/2
+		public static final Translation2d kFrontLeftLocation = new Translation2d(kModuleDistFromCenter,
+				kModuleDistFromCenter);
+		public static final Translation2d kFrontRightLocation = new Translation2d(kModuleDistFromCenter,
+				-kModuleDistFromCenter);
+		public static final Translation2d kBackLeftLocation = new Translation2d(-kModuleDistFromCenter,
+				kModuleDistFromCenter);
+		public static final Translation2d kBackRightLocation = new Translation2d(-kModuleDistFromCenter,
+				-kModuleDistFromCenter);
 
 		public static final int kEncoderDepth = 4;
 		public static final int kEncoderMeasurementPeriod = 16;
@@ -79,7 +83,6 @@ public class Constants {
 		public static final TalonFXConfiguration kSteerConfig = new TalonFXConfiguration();
 		static {
 			kSteerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			kSteerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 			kSteerConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
 			kSteerConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
 			kSteerConfig.CurrentLimits.StatorCurrentLimit = 60;
