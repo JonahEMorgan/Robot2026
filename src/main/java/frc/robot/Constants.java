@@ -61,6 +61,8 @@ public class Constants {
 			public static final double kDeployAngle = 0;
 			@FixMe(reason = "Tune value")
 			public static final double kP = 0;
+			@FixMe(reason = "Determine velocity")
+			public static final double kStationaryVelocity = 0;
 		}
 	}
 
