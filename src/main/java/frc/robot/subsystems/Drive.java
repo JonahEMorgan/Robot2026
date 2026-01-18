@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
-public class DriveSubsystem extends SubsystemBase {
+public class Drive extends SubsystemBase {
 	private final SwerveModule m_frontLeft;
 	private final SwerveModule m_frontRight;
 	private final SwerveModule m_backLeft;
@@ -63,7 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private AtomicBoolean shouldBeCoast = new AtomicBoolean(true);
 
 	/** Creates a new DriveSubsystem. */
-	public DriveSubsystem() {
+	public Drive() {
 		m_orientationController.enableContinuousInput(-Math.PI, Math.PI);
 		m_posePublisher = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Pose", Pose2d.struct)
 				.publish();

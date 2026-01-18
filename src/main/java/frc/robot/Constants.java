@@ -5,8 +5,65 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Compliance.FixMe;
 
 public class Constants {
+	public static final class Subsystems {
+		public static final class TurretConstants {
+			public static final double kDeadzone = .05;
+
+			public static final class Yaw {
+				@FixMe(reason = "Talk to electrical")
+				public static final int kMotorPort = -1;
+				@FixMe(reason = "Tune value")
+				public static final double kP = 0;
+			}
+
+			public static final class Pitch {
+				@FixMe(reason = "Talk to electrical")
+				public static final int kMotorPort = -1;
+				@FixMe(reason = "Tune value")
+				public static final double kP = 0;
+			}
+		}
+
+		public static final class TransportConstants {
+			@FixMe(reason = "Talk to electrical")
+			public static final int kMotorPort = -1;
+			@FixMe(reason = "Determine speed")
+			public static final double kDefaultSpeed = 0;
+		}
+
+		public static final class ShooterConstants {
+			@FixMe(reason = "Talk to electrical")
+			public static final int kMotorPort = -1;
+			@FixMe(reason = "Determine speed")
+			public static final double kDefaultSpeed = 0;
+		}
+
+		public static final class ClimberConstants {
+			@FixMe(reason = "Talk to electrical")
+			public static final int kMotorPort = -1;
+			@FixMe(reason = "Determine speed")
+			public static final double kDefaultSpeed = 0;
+		}
+
+		public static final class IntakeConstants {
+			@FixMe(reason = "Talk to electrical")
+			public static final int kRollerPort = -1;
+			@FixMe(reason = "Talk to electrical")
+			public static final int kDeployPort = -1;
+			@FixMe(reason = "Determine speed")
+			public static final double kDefaultSpeed = 0;
+			@FixMe(reason = "Determine angle")
+			public static final double kRetractAngle = 0;
+			@FixMe(reason = "Determine angle")
+			public static final double kDeployAngle = 0;
+			@FixMe(reason = "Tune value")
+			public static final double kP = 0;
+		}
+	}
+
 	public static final class ControllerConstants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
