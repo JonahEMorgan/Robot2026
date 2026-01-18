@@ -5,21 +5,38 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
+	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
 
-	private final RobotContainer m_robotContainer;
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
+	private final CommandPS5Controller m_joystick = new CommandPS5Controller(
+			Constants.ControllerConstants.kDriverControllerPort);
 
 	public Robot() {
-		m_robotContainer = new RobotContainer();
+		BindDriveControls();
+	}
+
+	private void BindDriveControls() {
+		m_driveSubsystem.setDefaultCommand(
+				m_driveSubsystem.driveCommand(
+						() -> -m_joystick.getLeftY(), () -> -m_joystick.getLeftX(),
+						() -> m_joystick.getL2Axis() - m_joystick.getR2Axis(), m_joystick.getHID()::getCreateButton));
 	}
 
 	@Override
 	public void robotPeriodic() {
-		CommandScheduler.getInstance().run();
+		m_scheduler.run();
+
+		SmartDashboard.putData(m_scheduler);
 	}
 
 	@Override
@@ -28,23 +45,26 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
+
 	}
 
 	@Override
 	public void disabledExit() {
+
 	}
 
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+		m_autonomousCommand = m_autoChooser.getSelected();
 
 		if (m_autonomousCommand != null) {
-			m_autonomousCommand.schedule();
+			m_scheduler.schedule(m_autonomousCommand);
 		}
 	}
 
 	@Override
 	public void autonomousPeriodic() {
+
 	}
 
 	@Override
@@ -60,6 +80,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+
 	}
 
 	@Override
@@ -77,5 +98,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testExit() {
+	}
+
+	@Override
+	public void simulationPeriodic() {
+
 	}
 }
