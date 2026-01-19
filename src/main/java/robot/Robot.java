@@ -130,8 +130,8 @@ public class Robot extends TimedRobot {
 		 */
 		m_turretSubsystem.setDefaultCommand(
 				m_turretSubsystem.aimWithJoystick(
-						m_joystick::getLeftX,
-						m_joystick::getLeftY));
+						m_joystick::getRightX,
+						m_joystick::getRightY));
 		/**
 		 * Bind the climber system to use the D-pad for both up and down.
 		 */
