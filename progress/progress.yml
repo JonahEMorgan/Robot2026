@@ -150,10 +150,10 @@ Subsystems:
       - Back left steer: CAN id 31
       - Front left steer: CAN id 41
     Button Bindings:
-      - Left joystick: Translational movement
-      - Left trigger: Turn left
-      - Right trigger: Turn right
-      - Create button: Toggle field relative and robot relative
+      - Left Stick All: Translational movement
+      - L2: Turn left
+      - R2: Turn right
+      - Create: Toggle field relative and robot relative
 
   - Name: Intake
     Description: The intake subsystem collects fuel from the field and indexes it into the transport.
@@ -168,8 +168,8 @@ Subsystems:
       - Deploy motor: CAN id TBD
       - Roller motor: CAN id TBD
     Button Bindings:
-      - Right bumper: Spin rollers inward
-      - Left bumper: Spin rollers outward
+      - R1: Spin rollers inward
+      - L1: Spin rollers outward
       - Circle: Deploy & retract rollers
     
   - Name: Transport
@@ -207,8 +207,8 @@ Subsystems:
     Motors:
       - Climber motor: CAN id TBD
     Button Bindings:
-      - D-pad up: Climber up
-      - D-pad down: Climber down
+      - D-pad Up: Climber up
+      - D-pad Down: Climber down
 
   - Name: Turret
     Description: The turret subsystem aims the shooter in order to land fuel in the hub.
@@ -227,5 +227,5 @@ Subsystems:
       - Yaw motor: CAN id TBD
       - Pitch motor: CAN id TBD
     Button Bindings:
-      - Right joystick: Aim turret
+      - Right Stick All: Aim turret
 ...
