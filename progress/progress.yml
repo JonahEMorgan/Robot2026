@@ -126,6 +126,10 @@ Subsystems:
     Description: The drive subsystem allows the robot to traverse the field, translating and rotating its position.
     Progress: 100%
     Implementation Level: Polished
+    Owners:
+      - Yeli Bello
+    Members:
+      - Jonah Morgan
     Commands:
       - *toggleCoastMode
       - *driveCommand
@@ -159,6 +163,10 @@ Subsystems:
     Description: The intake subsystem collects fuel from the field and indexes it into the transport.
     Progress: 75%
     Implementation Level: Draft
+    Owners:
+      - Jonathan Li
+    Members:
+      - Nitya Bajaj
     Commands:
       - *deployRollers
       - *retractRollers
@@ -176,6 +184,7 @@ Subsystems:
     Description: The transport subsystem stores fuel and allows it to move from the intake to the shooter.
     Progress: 100%
     Implementation Level: Untested
+    Owner: Vincent Christiansen
     Commands:
       - *transport_moveForTime
       - *transport_moveWithTrigger
@@ -189,6 +198,11 @@ Subsystems:
     Description: The shooter subsystem uses a flywheel to launch fuel from the robot.
     Progress: 75%
     Implementation Level: Draft
+    Owners:
+      - Arham Ahsan
+      - Austen Mowry
+    Members:
+      - Nabhan Sadeed
     Commands:
       - *shooter_moveForTime
       - *shooter_moveWithTrigger
@@ -201,6 +215,10 @@ Subsystems:
     Description: The climber subsystem moves up and down to attach to the tower.
     Progress: 75%
     Implementation Level: Draft
+    Owners:
+      - Nitya Bajaj
+    Members:
+      - Arham Ahsan
     Commands:
       - *climber_moveForTime
       - *climber_moveWithTrigger
@@ -214,6 +232,11 @@ Subsystems:
     Description: The turret subsystem aims the shooter in order to land fuel in the hub.
     Progress: 50%
     Implementation Level: Draft
+    Owners:
+      - Yeli Bello
+    Members:
+      - Nabhan Sadeed
+      - Alex Ostrovskiy
     Commands:
       - *aimWithJoystick
       - *aimAtAngle

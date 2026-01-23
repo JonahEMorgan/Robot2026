@@ -56,7 +56,7 @@ button,
 
 details {
 	overflow-y: scroll;
-	padding: 1em;
+	padding: .5em;
 }
 
 details,
@@ -80,6 +80,7 @@ summary::marker {
 
 summary {
 	position: relative;
+	height: 11em;
 }
 
 summary::after {
@@ -128,6 +129,9 @@ details:not([open]) summary {
 
 .tag {
 	padding: .5em;
+	bottom: 0;
+	position: absolute;
+	width: 100%;
 }
 
 .tag::after {
@@ -168,7 +172,7 @@ main {
 
 .progress {
 	position: absolute;
-	width: 6em;
+	width: 7.5em;
 	aspect-ratio: 1;
 	right: 3em;
 	top: 0em;
@@ -191,11 +195,7 @@ main {
 	left: 0;
 	right: 0;
 	position: absolute;
-	line-height: 6em;
-}
-
-summary h1 {
-	margin-bottom: 2em;
+	line-height: 7.5em;
 }
 
 body {
@@ -217,6 +217,52 @@ body {
 .button::after {
 	font-family: "Material Symbols Outlined";
 	content: "arrow_right_alt";
+}
+
+.person::before {
+	content: attr(data-initials);
+	width: 2em;
+	aspect-ratio: 1;
+	background: #0004;
+	font-size: 1.5em;
+	border-radius: 100%;
+	text-align: center;
+	line-height: 2em;
+}
+
+.people {
+	display: flex;
+	gap: 1em;
+	margin: .5em;
+}
+
+.person {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	width: max-content;
+	align-items: center;
+}
+
+.owner::after,
+.member::after {
+	position: absolute;
+	top: -1em;
+	right: calc(50% - 1em);
+	background: red;
+	color: white;
+	border-radius: 1em;
+	padding: .2em;
+	transform: rotate(10deg) translateX(50%);
+	font-size: .75em;
+}
+
+.member::after {
+	content: "Member";
+}
+
+.owner::after {
+	content: "Owner";
 }
 
 @font-face {

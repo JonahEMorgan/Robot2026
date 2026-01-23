@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="description" content="{{ blurb }}">
-		<meta name="keywords" content="{{ tags | join(" , ") }}">
+		<meta name="keywords" content="{{ tags | join(', ') }}">
 		<meta name="author" content="{{ author }}">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>{{ title }}</title>
@@ -26,6 +26,14 @@
 						<summary>
 							<h1>{{ subsystem.Name }}</h1>
 							<div class="progress" :data-label="subsystem.Progress" :style="{'--angle': subsystem.Progress.slice(0, -1) / 100}"></div>
+							<div class="people">
+								<div v-for="owner in subsystem.Owners" :data-initials="owner.split(' ').map(w => w[0]).join('')" class="person owner">
+									{{ owner }}
+								</div>
+								<div v-for="member in subsystem.Members" :data-initials="member.split(' ').map(w => w[0]).join('')" class="person member">
+									{{ member }}
+								</div>
+							</div>
 							<p class="tag" :class="subsystem['Implementation Level']">
 								{{ subsystem["Implementation Level"] }}
 							</p>
