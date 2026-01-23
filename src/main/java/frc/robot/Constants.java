@@ -5,7 +5,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Compliance.FixMe;
+import frc.robot.utilities.Compliance.FixMe;
 
 public class Constants {
 	public static final class Subsystems {
@@ -102,15 +102,6 @@ public class Constants {
 		public static final double kRotationS = 0;
 		public static final double kRotationV = 1.9;
 		public static final double kRotationA = 0.009;
-
-		public static final double kTeleopMaxVoltage = 12;
-		public static final double kTeleopMaxTurnVoltage = 7.2;
-		public static final double kDriveGearRatio = 6.75;
-		public static final double kSteerGearRatio = 150.0 / 7; // TODO: Change value for 5i's
-		public static final double kWheelDiameter = Units.inchesToMeters(4);
-		public static final double kWheelCircumference = Math.PI * kWheelDiameter;
-
-		public static final double kMetersPerMotorRotation = kWheelCircumference / kDriveGearRatio;
 
 		// https://docs.wpilib.org/en/latest/docs/software/basic-programming/coordinate-system.html
 		public static final double kModuleDistFromCenter = Units.inchesToMeters(14.5); // Width/2

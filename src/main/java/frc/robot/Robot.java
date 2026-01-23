@@ -15,11 +15,12 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Transport;
 import frc.robot.subsystems.Turret;
+import frc.robot.utilities.CompBot;
 
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
 
-	private final Drive m_driveSubsystem = new Drive();
+	private final Drive m_driveSubsystem = new Drive(CompBot::new);
 	private final Transport m_transportSubsystem = new Transport();
 	private final Intake m_intakeSubsystem = new Intake();
 	private final Shooter m_shooterSubsystem = new Shooter();
