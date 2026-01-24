@@ -15,61 +15,128 @@ import edu.wpi.first.math.util.Units;
  * the little bot that could.
  */
 public class Dennis extends PhysicalModule {
+	/**
+	 * The drive and steer motors both use spark max motor controllers.
+	 */
 	private final SparkMax m_driveMotor, m_steerMotor;
 
+	/**
+	 * Gets the constants specific to Dennis.
+	 * 
+	 * @return constants
+	 */
 	public Constants getConstants() {
 		return new Constants(12, 7.2, 6.75, 150. / 7, Units.inchesToMeters(4));
 	}
 
+	/**
+	 * Configures the motor controllers according to the CAN ids.
+	 * 
+	 * @param drivePort CAN id of drive motor
+	 * @param steerPort CAN id of steer motor
+	 */
 	public Dennis(int drivePort, int steerPort) {
 		m_driveMotor = new SparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new SparkMax(steerPort, MotorType.kBrushless);
 	}
 
+	/**
+	 * Gets a neo gearbox for the drive and steer motors.
+	 * 
+	 * @return gearbox
+	 */
 	public DCMotor getGearbox() {
 		return DCMotor.getNEO(1);
 	}
 
+	/**
+	 * Enables coast mode by changing the motor controller configuration.
+	 */
 	public void enableCoast() {
 		m_driveMotor.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kCoast), ResetMode.kNoResetSafeParameters,
 				PersistMode.kNoPersistParameters);
 	}
 
+	/**
+	 * Enables brake mode by changing the motor controller configuration.
+	 */
 	public void enableBrake() {
 		m_driveMotor.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kBrake), ResetMode.kNoResetSafeParameters,
 				PersistMode.kNoPersistParameters);
 	}
 
+	/**
+	 * Gets the number of rotations made by the drive wheel by polling the relative
+	 * encoder.
+	 * 
+	 * @return distance in rotations
+	 */
 	public double getDriveRotationsInternal() {
 		return m_driveMotor.getEncoder().getPosition();
 	}
 
+	/**
+	 * Sets the number of rotations made by the drive wheel by changing the value of
+	 * the relative encoder.
+	 * 
+	 * @param rotations distance in rotations
+	 */
 	public void setDriveRotationsInternal(double rotations) {
 		m_driveMotor.getEncoder().setPosition(rotations);
 	}
 
+	/**
+	 * Gets the current being used to power the drive motor.
+	 * 
+	 * @return current in amperes
+	 */
 	public double getDriveCurrent() {
 		return m_driveMotor.getOutputCurrent();
 	}
 
+	/**
+	 * Gets the current being used to power the steer motor.
+	 * 
+	 * @return current in amperes
+	 */
 	public double getSteerCurrent() {
 		return m_steerMotor.getOutputCurrent();
 	}
 
+	/**
+	 * Gets the voltage being used to power the drive motor.
+	 * 
+	 * @return voltage in volts
+	 */
 	protected double getDriveVoltageInternal() {
 		return m_driveMotor.getAppliedOutput() * m_driveMotor.getBusVoltage();
 	}
 
+	/**
+	 * Gets the voltage being used to power the steer motor.
+	 * 
+	 * @return voltage in volts
+	 */
 	protected double getSteerVoltageInternal() {
 		return m_steerMotor.getAppliedOutput() * m_steerMotor.getBusVoltage();
 	}
 
+	/**
+	 * Sets the voltage being used to power the drive motor.
+	 * 
+	 * @param voltage voltage in volts
+	 */
 	protected void setDriveVoltageInternal(double voltage) {
 		m_driveMotor.setVoltage(voltage);
 	}
 
+	/**
+	 * Sets the voltage being used to power the steer motor.
+	 * 
+	 * @param voltage voltage in volts
+	 */
 	protected void setSteerVoltageInternal(double voltage) {
 		m_steerMotor.setVoltage(voltage);
 	}
