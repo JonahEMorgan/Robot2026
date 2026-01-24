@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package robot;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -15,9 +15,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.utilities.PhysicalModule;
-import frc.robot.utilities.PhysicalModule.Constants;
+import robot.Constants.DriveConstants;
+import robot.utilities.PhysicalModule;
+import robot.utilities.PhysicalModule.Constants;
 
 /**
  * Contains all the hardware and controllers for a swerve module.

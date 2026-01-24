@@ -1,4 +1,4 @@
-package frc.robot.utilities;
+package robot.utilities;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.DriveConstants;
+import robot.Constants.DriveConstants;
 
 public class CompBot extends PhysicalModule {
 	private static final TalonFXConfiguration s_config = new TalonFXConfiguration();

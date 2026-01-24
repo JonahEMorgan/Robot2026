@@ -1,4 +1,4 @@
-package frc.robot.utilities;
+package robot.utilities;
 
 public class PracticeBot extends CompBot {
 	public PracticeBot(int drivePort, int steerPort) {

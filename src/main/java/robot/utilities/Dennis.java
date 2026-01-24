@@ -1,4 +1,4 @@
-package frc.robot.utilities;
+package robot.utilities;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;

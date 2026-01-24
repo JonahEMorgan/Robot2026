@@ -2,11 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
-import static frc.robot.Constants.DriveConstants.*;
+import static robot.Constants.DriveConstants.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
@@ -38,9 +38,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ControllerConstants;
-import frc.robot.SwerveModule;
-import frc.robot.utilities.PhysicalModule.ModuleCreator;
+import robot.Constants.ControllerConstants;
+import robot.SwerveModule;
+import robot.utilities.PhysicalModule.ModuleCreator;
 
 public class DriveSubsystem extends SubsystemBase {
 	private final SwerveModule m_frontLeft, m_frontRight, m_backLeft, m_backRight;
