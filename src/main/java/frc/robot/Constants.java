@@ -11,7 +11,7 @@ public class Constants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
 		public static final double kDeadzone = 0.05;
-		public static final double kTriggerDeadzone = .05;
+		public static final double kTriggerDeadzone = 0.05;
 	}
 
 	public static final class DriveConstants {
@@ -44,15 +44,6 @@ public class Constants {
 		public static final double kRotationV = 1.9;
 		public static final double kRotationA = 0.009;
 
-		public static final double kTeleopMaxVoltage = 12;
-		public static final double kTeleopMaxTurnVoltage = 7.2;
-		public static final double kDriveGearRatio = 6.75;
-		public static final double kSteerGearRatio = 150.0 / 7; // TODO: Change value for 5i's
-		public static final double kWheelDiameter = Units.inchesToMeters(4);
-		public static final double kWheelCircumference = Math.PI * kWheelDiameter;
-
-		public static final double kMetersPerMotorRotation = kWheelCircumference / kDriveGearRatio;
-
 		// https://docs.wpilib.org/en/latest/docs/software/basic-programming/coordinate-system.html
 		public static final double kModuleDistFromCenter = Units.inchesToMeters(14.5); // Width/2
 		public static final Translation2d kFrontLeftLocation = new Translation2d(kModuleDistFromCenter,
@@ -64,50 +55,27 @@ public class Constants {
 		public static final Translation2d kBackRightLocation = new Translation2d(-kModuleDistFromCenter,
 				-kModuleDistFromCenter);
 
-		public static final int kEncoderDepth = 4;
-		public static final int kEncoderMeasurementPeriod = 16;
-		// The amount of time to go from 0 to full power in seconds
 		public static final double kRampRate = .1;
-		public static final TalonFXConfiguration kDriveConfig = new TalonFXConfiguration();
+		private static final TalonFXConfiguration kBaseConfig = new TalonFXConfiguration();
 		static {
-			kDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+			kBaseConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+			kBaseConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+			kBaseConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+			kBaseConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
+			kBaseConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
+		}
+		public static final TalonFXConfiguration kDriveConfig = kBaseConfig.clone();
+		static {
 			kDriveConfig.CurrentLimits.SupplyCurrentLimit = 45; // For avoiding brownout
 			kDriveConfig.CurrentLimits.SupplyCurrentLowerLimit = 45;
-			kDriveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 			kDriveConfig.CurrentLimits.StatorCurrentLimit = 80; // Output current (proportional to acceleration)
-			kDriveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-			kDriveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
-			kDriveConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
 		}
-
-		public static final TalonFXConfiguration kSteerConfig = new TalonFXConfiguration();
+		public static final TalonFXConfiguration kSteerConfig = kBaseConfig.clone();
 		static {
-			kSteerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			kSteerConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
-			kSteerConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
 			kSteerConfig.CurrentLimits.StatorCurrentLimit = 60;
-			kSteerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 			kSteerConfig.CurrentLimits.SupplyCurrentLimit = 75;
-			kSteerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 		}
-
 		public static final double kTeleopDriveMaxSpeed = 12.0; // 5 meters per second
 		public static final double kTeleopTurnMaxAngularSpeed = Math.toRadians(360 * 5);
-
-		public static final double kDriveMaxSpeed = 12.0; // 5 meters per second
-		public static final double kDriveMinSpeed = 0.2; // 0.2 meters per second
-		public static final double kTurnMaxAngularSpeed = Math.toRadians(360); // 1 rotation per second
-		public static final double kTurnMinAngularSpeed = Math.toRadians(0); // 0 degree per second
-
-		// DriveCommand.java Constants
-		public static final double kDriveP = 7;
-		public static final double kDriveI = 0;
-		public static final double kDriveD = 0;
-		public static final double kDriveMaxAcceleration = 2 * kDriveMaxSpeed; // kDriveMaxSpeed in 1.5 sec
-
-		public static final double kTurnP = 5;
-		public static final double kTurnI = 0;
-		public static final double kTurnD = 0.1;
-		public static final double kTurnMaxAcceleration = 2 * kTurnMaxAngularSpeed; // kTurnMaxAngularSpeed in 0.5
 	}
 }

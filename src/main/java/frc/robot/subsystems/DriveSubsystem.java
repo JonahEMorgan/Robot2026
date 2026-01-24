@@ -40,12 +40,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
+import frc.robot.utilities.PhysicalModule.ModuleCreator;
 
 public class DriveSubsystem extends SubsystemBase {
-	private final SwerveModule m_frontLeft;
-	private final SwerveModule m_frontRight;
-	private final SwerveModule m_backLeft;
-	private final SwerveModule m_backRight;
+	private final SwerveModule m_frontLeft, m_frontRight, m_backLeft, m_backRight;
 
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
@@ -57,15 +55,14 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final StructPublisher<Pose2d> m_posePublisher;
 	private final StructPublisher<ChassisSpeeds> m_currentChassisSpeedsPublisher;
-	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
-	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
+	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher, m_currentModuleStatePublisher;
 	private final StructPublisher<Rotation2d> m_targetHeadingPublisher;
 
 	private final PIDController m_orientationController = new PIDController(kRotationP, kRotationI, kRotationD);
 	private AtomicBoolean shouldBeCoast = new AtomicBoolean(true);
 
 	/** Creates a new DriveSubsystem. */
-	public DriveSubsystem() {
+	public DriveSubsystem(ModuleCreator moduleTheCreator) {
 		m_orientationController.enableContinuousInput(-Math.PI, Math.PI);
 		m_posePublisher = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Pose", Pose2d.struct)
 				.publish();
@@ -81,10 +78,14 @@ public class DriveSubsystem extends SubsystemBase {
 		m_targetHeadingPublisher = NetworkTableInstance.getDefault()
 				.getStructTopic("/SmartDashboard/Target Heading", Rotation2d.struct)
 				.publish();
-		m_frontLeft = new SwerveModule(kFrontLeftCANCoderPort, kFrontLeftDrivePort, kFrontLeftSteerPort);
-		m_frontRight = new SwerveModule(kFrontRightCANCoderPort, kFrontRightDrivePort, kFrontRightSteerPort);
-		m_backLeft = new SwerveModule(kBackLeftCANCoderPort, kBackLeftDrivePort, kBackLeftSteerPort);
-		m_backRight = new SwerveModule(kBackRightCANCoderPort, kBackRightDrivePort, kBackRightSteerPort);
+		m_frontLeft = new SwerveModule(moduleTheCreator.create(kFrontLeftDrivePort, kFrontLeftSteerPort),
+				kFrontLeftCANCoderPort);
+		m_frontRight = new SwerveModule(moduleTheCreator.create(kFrontRightDrivePort, kFrontRightSteerPort),
+				kFrontRightCANCoderPort);
+		m_backLeft = new SwerveModule(moduleTheCreator.create(kBackLeftDrivePort, kBackLeftSteerPort),
+				kBackLeftCANCoderPort);
+		m_backRight = new SwerveModule(moduleTheCreator.create(kBackRightDrivePort, kBackRightSteerPort),
+				kBackRightCANCoderPort);
 		// Adjust ramp rate, step voltage, and timeout to make sure robot doesn't
 		// collide with anything
 		var config = new SysIdRoutine.Config(Volts.of(2.5).div(Seconds.of(1)), null, Seconds.of(3));
