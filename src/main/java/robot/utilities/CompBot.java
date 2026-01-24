@@ -20,6 +20,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return constants
 	 */
+	@Override
 	public Constants getConstants() {
 		return new Constants(12, 7.2, 6.75, 150. / 7, Units.inchesToMeters(4));
 	}
@@ -41,6 +42,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return gearbox
 	 */
+	@Override
 	public DCMotor getGearbox() {
 		return DCMotor.getKrakenX60(1);
 	}
@@ -48,6 +50,7 @@ public class CompBot extends PhysicalModule {
 	/**
 	 * Enables coast mode by changing the motor controller configuration.
 	 */
+	@Override
 	public void enableCoast() {
 		s_config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 		m_driveMotor.getConfigurator().apply(s_config);
@@ -56,6 +59,7 @@ public class CompBot extends PhysicalModule {
 	/**
 	 * Enables brake mode by changing the motor controller configuration.
 	 */
+	@Override
 	public void enableBrake() {
 		s_config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 		m_driveMotor.getConfigurator().apply(s_config);
@@ -67,6 +71,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return distance in rotations
 	 */
+	@Override
 	public double getDriveRotationsInternal() {
 		return m_driveMotor.getPosition().getValueAsDouble();
 	}
@@ -77,6 +82,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @param rotations distance in rotations
 	 */
+	@Override
 	public void setDriveRotationsInternal(double rotations) {
 		m_driveMotor.setPosition(rotations);
 	}
@@ -86,6 +92,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return current in amperes
 	 */
+	@Override
 	public double getDriveCurrent() {
 		return m_driveMotor.getStatorCurrent().getValueAsDouble();
 	}
@@ -95,6 +102,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return current in amperes
 	 */
+	@Override
 	public double getSteerCurrent() {
 		return m_steerMotor.getStatorCurrent().getValueAsDouble();
 	}
@@ -104,6 +112,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return voltage in volts
 	 */
+	@Override
 	public double getDriveVoltageInternal() {
 		return m_driveMotor.getMotorVoltage().getValueAsDouble();
 	}
@@ -113,6 +122,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @return voltage in volts
 	 */
+	@Override
 	public double getSteerVoltageInternal() {
 		return m_steerMotor.getMotorVoltage().getValueAsDouble();
 	}
@@ -122,6 +132,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @param voltage voltage in volts
 	 */
+	@Override
 	public void setDriveVoltageInternal(double voltage) {
 		m_driveMotor.setVoltage(voltage);
 	}
@@ -131,6 +142,7 @@ public class CompBot extends PhysicalModule {
 	 * 
 	 * @param voltage voltage in volts
 	 */
+	@Override
 	public void setSteerVoltageInternal(double voltage) {
 		m_steerMotor.setVoltage(voltage);
 	}

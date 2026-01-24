@@ -25,6 +25,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return constants
 	 */
+	@Override
 	public Constants getConstants() {
 		return new Constants(12, 7.2, 6.75, 150. / 7, Units.inchesToMeters(4));
 	}
@@ -45,6 +46,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return gearbox
 	 */
+	@Override
 	public DCMotor getGearbox() {
 		return DCMotor.getNEO(1);
 	}
@@ -52,6 +54,7 @@ public class Dennis extends PhysicalModule {
 	/**
 	 * Enables coast mode by changing the motor controller configuration.
 	 */
+	@Override
 	public void enableCoast() {
 		m_driveMotor.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kCoast), ResetMode.kNoResetSafeParameters,
@@ -61,6 +64,7 @@ public class Dennis extends PhysicalModule {
 	/**
 	 * Enables brake mode by changing the motor controller configuration.
 	 */
+	@Override
 	public void enableBrake() {
 		m_driveMotor.configure(
 				new SparkMaxConfig().idleMode(IdleMode.kBrake), ResetMode.kNoResetSafeParameters,
@@ -73,6 +77,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return distance in rotations
 	 */
+	@Override
 	public double getDriveRotationsInternal() {
 		return m_driveMotor.getEncoder().getPosition();
 	}
@@ -83,6 +88,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @param rotations distance in rotations
 	 */
+	@Override
 	public void setDriveRotationsInternal(double rotations) {
 		m_driveMotor.getEncoder().setPosition(rotations);
 	}
@@ -92,6 +98,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return current in amperes
 	 */
+	@Override
 	public double getDriveCurrent() {
 		return m_driveMotor.getOutputCurrent();
 	}
@@ -101,6 +108,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return current in amperes
 	 */
+	@Override
 	public double getSteerCurrent() {
 		return m_steerMotor.getOutputCurrent();
 	}
@@ -110,6 +118,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return voltage in volts
 	 */
+	@Override
 	protected double getDriveVoltageInternal() {
 		return m_driveMotor.getAppliedOutput() * m_driveMotor.getBusVoltage();
 	}
@@ -119,6 +128,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @return voltage in volts
 	 */
+	@Override
 	protected double getSteerVoltageInternal() {
 		return m_steerMotor.getAppliedOutput() * m_steerMotor.getBusVoltage();
 	}
@@ -128,6 +138,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @param voltage voltage in volts
 	 */
+	@Override
 	protected void setDriveVoltageInternal(double voltage) {
 		m_driveMotor.setVoltage(voltage);
 	}
@@ -137,6 +148,7 @@ public class Dennis extends PhysicalModule {
 	 * 
 	 * @param voltage voltage in volts
 	 */
+	@Override
 	protected void setSteerVoltageInternal(double voltage) {
 		m_steerMotor.setVoltage(voltage);
 	}
