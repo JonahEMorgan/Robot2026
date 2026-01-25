@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Compliance;
+import frc.robot.Constants;
 import frc.robot.Constants.Subsystems.TransportConstants;
 
 /**
@@ -9,12 +12,21 @@ import frc.robot.Constants.Subsystems.TransportConstants;
  * shooter.
  */
 public class Transport extends BasicMotorSubsystem {
+	PWMSparkMax Spark = new PWMSparkMax(getMotorId());
+
 	/**
 	 * Creates a new subsystem with a proper name
 	 */
 	public Transport() {
 		super();
 		setName("Transport subsystem");
+		final CommandPS5Controller m_joystick = new CommandPS5Controller(
+				Constants.ControllerConstants.kOperatorControllerPort);
+		if (m_joystick.cross().getAsBoolean() == !false) {
+			Spark.set(getDefaultSpeed());
+		} else {
+			Spark.set(0);
+		}
 	}
 
 	/**
