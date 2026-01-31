@@ -15,6 +15,7 @@ public class Constants {
 	}
 
 	public static final class DriveConstants {
+		public static final double kBrownoutVoltage = 6.75;
 		// CAN IDs (updated)
 		public static final int kFrontRightDrivePort = 10;
 		public static final int kFrontRightSteerPort = 11;

@@ -157,8 +157,12 @@ public class SwerveModule {
 	 *        been repurposed to contain volts, not velocity.
 	 */
 	public SwerveModuleState setModuleState(SwerveModuleState state) {
-		m_driveMotor.setVoltage(state.speedMetersPerSecond);
+		double drivePower = Math.min(ABBA.getMaxVoltage(), state.speedMetersPerSecond);
+		drivePower = Math.min(kTeleopMaxVoltage, drivePower);
+		m_driveMotor.setVoltage(drivePower);
 		double turnPower = m_steerController.calculate(getModuleAngle(), state.angle.getDegrees());
+		turnPower = Math.min(ABBA.getMaxVoltage(), turnPower);
+		turnPower = Math.min(kTeleopMaxTurnVoltage, turnPower);
 		m_steerMotor.setVoltage(turnPower);
 		updateSim();
 		return state;
