@@ -29,12 +29,14 @@ public class SwerveModule {
 	private final CANcoder m_CANCoder;
 	private final TalonFX m_driveMotor;
 	private final TalonFX m_steerMotor;
+	private final int m_index;
 
 	// private final SparkFlexSim m_steerMotorSim;
 	private final DCMotorSim m_driveMotorModel;
 	private final DCMotorSim m_steerMotorModel;
 
-	public SwerveModule(int canId, int drivePort, int steerPort) {
+	public SwerveModule(int index, int canId, int drivePort, int steerPort) {
+		m_index = index;
 		m_CANCoder = new CANcoder(canId);
 		m_driveMotor = new TalonFX(drivePort);
 		m_steerMotor = new TalonFX(steerPort);
@@ -57,10 +59,15 @@ public class SwerveModule {
 		}
 	}
 
-	public void setNeutralMode(NeutralModeValue neutralMode) {
+	public int getIndex() {
+		return m_index;
+	}
+
+	public NeutralModeValue setNeutralMode(NeutralModeValue neutralMode) {
 		var config = new TalonFXConfiguration();
 		config.MotorOutput.NeutralMode = neutralMode;
 		m_driveMotor.getConfigurator().apply(config);
+		return neutralMode;
 	}
 
 	/**
@@ -93,8 +100,9 @@ public class SwerveModule {
 	/**
 	 * Resets drive encoder to zero.
 	 */
-	public void resetDriveEncoder() {
+	public boolean resetDriveEncoder() {
 		m_driveMotor.setPosition(0);
+		return getDriveEncoderPosition() == 0;
 	}
 
 	/**
@@ -148,11 +156,12 @@ public class SwerveModule {
 	 * @param state The module state. Note that the speedMetersPerSecond field has
 	 *        been repurposed to contain volts, not velocity.
 	 */
-	public void setModuleState(SwerveModuleState state) {
+	public SwerveModuleState setModuleState(SwerveModuleState state) {
 		m_driveMotor.setVoltage(state.speedMetersPerSecond);
 		double turnPower = m_steerController.calculate(getModuleAngle(), state.angle.getDegrees());
 		m_steerMotor.setVoltage(turnPower);
 		updateSim();
+		return state;
 	}
 
 	private void updateSim() {
