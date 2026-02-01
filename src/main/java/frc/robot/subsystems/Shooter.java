@@ -1,38 +1,58 @@
 package frc.robot.subsystems;
 
-import frc.robot.Compliance;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsystems.ShooterConstants;
 
-/**
- * A subsystem which spins the shooter and launches fuel.
- */
-public class Shooter extends BasicMotorSubsystem {
-	/**
-	 * Creates a new subsystem with a proper name
-	 */
+public class Shooter extends SubsystemBase {
+
+	private final TalonFX m_TalonFX = new TalonFX(56);
+
+	private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);
+	private final DutyCycleOut m_dutyCycleRequest = new DutyCycleOut(0);
+
 	public Shooter() {
-		super();
-		setName("Shooter subsystem");
+		Slot0Configs slot0 = new Slot0Configs();
+		slot0.kP = 2.4;
+		slot0.kI = 0;
+		slot0.kD = 0.1;
+		slot0.kV = 0.125;
+		m_TalonFX.getConfigurator().apply(slot0);
 	}
 
-	/**
-	 * Gets the CAN id from the shooter constants for the motor controller.
-	 *
-	 * @return CAN id
-	 */
-	@Override
-	protected int getMotorId() {
-		return Compliance.ensure(ShooterConstants.class, "kMotorPort");
+	public void runShooterAtRPS(double rps) {
+
+		double trueRPS;
+
+		if (rps > 0 && rps < ShooterConstants.kMIN_RPS)
+			trueRPS = ShooterConstants.kMIN_RPS;
+		else if (rps > ShooterConstants.kMAX_RPS)
+			trueRPS = ShooterConstants.kMAX_RPS;
+		else
+			trueRPS = rps;
+
+		m_TalonFX.setControl(
+				m_velocityRequest.withVelocity(trueRPS));
 	}
 
-	/**
-	 * Gets the default speed from the shooter constants for the motor.
-	 *
-	 * @return default speed
-	 */
-	@Override
-	protected double getDefaultSpeed() {
-		return Compliance.ensure(ShooterConstants.class, "kDefaultSpeed");
+	public void stopShooter() {
+		m_TalonFX.setControl(m_dutyCycleRequest.withOutput(0.0));
 	}
 
+	public void runShooterAtPower(double power) {
+
+		double truePower;
+		if (power < ShooterConstants.kMIN_POWER)
+			truePower = ShooterConstants.kMIN_POWER;
+		else if (power > ShooterConstants.kMAX_POWER)
+			truePower = ShooterConstants.kMAX_POWER;
+		else
+			truePower = power;
+
+		m_TalonFX.setControl(m_dutyCycleRequest.withOutput(truePower));
+	}
 }

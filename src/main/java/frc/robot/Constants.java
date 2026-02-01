@@ -36,6 +36,12 @@ public class Constants {
 
 		public static final class ShooterConstants {
 			@FixMe(reason = "Talk to electrical")
+
+			public static final double kMAX_RPS = 5500.0 / 60.0;
+			public static final double kMIN_RPS = 0.0;
+			public static final double kMAX_POWER = 1.0;
+			public static final double kMIN_POWER = -1.0;
+
 			public static final int kMotorPort = -1;
 			@FixMe(reason = "Determine speed")
 			public static final double kDefaultSpeed = 0;

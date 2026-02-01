@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import frc.robot.commands.RunShooterAtRPS;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -53,8 +54,7 @@ public class Robot extends TimedRobot {
 		m_joystick.circle().onTrue(
 				m_intakeSubsystem.retractRollers());
 		m_shooterSubsystem.setDefaultCommand(
-				m_shooterSubsystem.moveWithTrigger(
-						m_joystick.square(), null));
+				new RunShooterAtRPS(m_shooterSubsystem, 5500.0 / 60.0));
 		m_turretSubsystem.setDefaultCommand(
 				m_turretSubsystem.aimWithJoystick(
 						m_joystick::getLeftX,
