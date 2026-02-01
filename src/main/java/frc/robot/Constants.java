@@ -15,7 +15,6 @@ public class Constants {
 	}
 
 	public static final class DriveConstants {
-		public static final double kBrownoutVoltage = 6.75;
 		// CAN IDs (updated)
 		public static final int kFrontRightDrivePort = 10;
 		public static final int kFrontRightSteerPort = 11;
@@ -45,8 +44,15 @@ public class Constants {
 		public static final double kRotationV = 1.9;
 		public static final double kRotationA = 0.009;
 
-		public static final double kTeleopMaxVoltage = 12;
-		public static final double kTeleopMaxTurnVoltage = 7.2;
+		public static final boolean[] kInverted = new boolean[] {
+				true, // Front left
+				false, // Front right
+				true, // Back left
+				false // Back right
+		};
+
+		public static final double kTeleopMaxVoltage = 2;
+		public static final double kTeleopMaxTurnVoltage = 4;
 		public static final double kDriveGearRatio = 6.75;
 		public static final double kSteerGearRatio = 150.0 / 7; // TODO: Change value for 5i's
 		public static final double kWheelDiameter = Units.inchesToMeters(4);

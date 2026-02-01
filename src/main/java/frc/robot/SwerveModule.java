@@ -9,6 +9,7 @@ import static frc.robot.Constants.DriveConstants.*;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -41,7 +42,10 @@ public class SwerveModule {
 		m_driveMotor = new TalonFX(drivePort);
 		m_steerMotor = new TalonFX(steerPort);
 		// m_steerMotorSim = new SparkFlexSim(m_steerMotor, DCMotor.getNEO(1));
-		m_driveMotor.getConfigurator().apply(DriveConstants.kDriveConfig);
+		TalonFXConfiguration config = DriveConstants.kDriveConfig.clone();
+		config.MotorOutput.Inverted = DriveConstants.kInverted[index] ? InvertedValue.Clockwise_Positive
+				: InvertedValue.CounterClockwise_Positive;
+		m_driveMotor.getConfigurator().apply(config);
 		// Helps with encoder precision (not set in stone)
 		// config.encoder.uvwAverageDepth(kEncoderDepth).uvwMeasurementPeriod(kEncoderMeasurementPeriod);
 		m_steerMotor.getConfigurator().apply(DriveConstants.kSteerConfig);
@@ -157,13 +161,17 @@ public class SwerveModule {
 	 *        been repurposed to contain volts, not velocity.
 	 */
 	public SwerveModuleState setModuleState(SwerveModuleState state) {
-		double drivePower = Math.min(ABBA.getMaxVoltage(), state.speedMetersPerSecond);
+		double driveSign = Math.signum(state.speedMetersPerSecond);
+		double drivePower = Math.abs(state.speedMetersPerSecond);
+		drivePower = Math.min(ABBA.getMaxVoltage(), drivePower);
 		drivePower = Math.min(kTeleopMaxVoltage, drivePower);
-		m_driveMotor.setVoltage(drivePower);
+		m_driveMotor.setVoltage(drivePower * driveSign);
 		double turnPower = m_steerController.calculate(getModuleAngle(), state.angle.getDegrees());
+		double turnSign = Math.signum(turnPower);
+		turnPower = Math.abs(turnPower);
 		turnPower = Math.min(ABBA.getMaxVoltage(), turnPower);
 		turnPower = Math.min(kTeleopMaxTurnVoltage, turnPower);
-		m_steerMotor.setVoltage(turnPower);
+		m_steerMotor.setVoltage(turnPower * turnSign);
 		updateSim();
 		return state;
 	}

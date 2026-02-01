@@ -90,6 +90,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		CommandScheduler.getInstance().cancelAll();
+		CommandScheduler.getInstance().schedule(ABBA.testBrownoutPreventionCommand());
 	}
 
 	@Override

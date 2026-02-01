@@ -54,7 +54,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
 	private final SwerveDriveOdometry m_odometry;
-	private final AHRS m_gyro = new AHRS(NavXComType.kUSB1);
+	private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
 	private final SimDouble m_gyroSim;
 	private final SysIdRoutine m_sysidRoutine;
 
@@ -163,8 +163,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @param isFieldRelative Whether or not the chassis speeds is field relative.
 	 * @return The module states, in order of FL, FR, BL, BR
 	 */
-	private SwerveModuleState[] calculateModuleStates(ChassisSpeeds speeds, boolean isFieldRelative) {
-		if (isFieldRelative)
+	private SwerveModuleState[] calculateModuleStates(ChassisSpeeds speeds, boolean isRobotRelative) {
+		SmartDashboard.putNumber("Heading", getHeading().getDegrees());
+		SmartDashboard.putBoolean("Robot Relative", isRobotRelative);
+		if (!isRobotRelative)
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		speeds = ChassisSpeeds.discretize(speeds, 0.03);
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
@@ -241,7 +243,7 @@ public class DriveSubsystem extends SubsystemBase {
 		return runEnd(
 				() -> setModuleStates(
 						calculateModuleStates(
-								chassisSpeeds(forwardSpeed, strafeSpeed, rotation), !isRobotRelative.getAsBoolean())),
+								chassisSpeeds(forwardSpeed, strafeSpeed, rotation), isRobotRelative.getAsBoolean())),
 				this::stopAllModules)
 						.withName("DefaultDriveCommand");
 	}
