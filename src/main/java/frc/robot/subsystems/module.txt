@@ -1,0 +1,51 @@
+input -> turn voltage (v), drive voltage (v)
+output -> turn angle (rad), drive velocity (rad/s)
+state -> turn angle (rad), turn velocity (rad/s), turn acceleration (rad/s^2), drive velocity (rad/s), drive acceleration (rad/s^2)
+parameters -> turn kv (rad/s/v), turn ka (lb*in/a), turn resistance (ohms), turn gear ratio, drive kv (rad/s/v),
+	drive ka (lb*in/a), drive resistance (ohms), drive gear ratio, wheel diameter (in), wheel width (in), robot weight (lbs),
+	wheel weight (lbs), coefficient of friction, coefficient of rolling resistance, number of wheels, wheel stiffness (lb/in), rubber relaxation time (s)
+
+typical values
+turn gear ratio -> 26
+drive gear ratio -> 675/112
+number of wheels -> 4
+wheel stiffness -> 500 lb/in
+rubber relaxation time -> .01 s
+coefficient of friction -> 1
+coefficient of rolling resistance -> .01
+turn kv -> 7758 rpm / 12 v * 2pi rad/r / 60 s/m
+drive kv -> 6000 rpm / 12 v * 2pi rad/r / 60 s/m
+turn ka -> 4.11 n*m / 279 a * / 9.81 n/kg * 2.2 lb/kg * 3.28 ft/m * 12 in/ft
+drive ka -> 7.09 n*m / 366 a * / 9.81 n/kg * 2.2 lb/kg * 3.28 ft/m * 12 in/ft
+turn resistance -> 12 v / 279 a
+drive resistance -> 12 v / 366 a
+robot weight -> 115 lb
+wheel weight -> .74 lb
+wheel diameter -> 4 in
+wheel width -> 2.25 in
+
+turn math
+normal force (lb) <- robot weight / number of wheels
+contact patch length (in) <- normal force / wheel stiffness
+characteristic speed (ft/s) <- contact patch length / 12 in/ft / rubber relaxation time
+current speed (ft/s) <- .5 * drive velocity * wheel diameter / 12 in/ft
+torque from friction (in*lb) <- sqrt((contact patch length)^2 + (wheel width)^2) * coefficient of friction * normal force / 3 / exp(current speed / characteristic speed)
+moment of inertia (lb*in^2) <- wheel weight * (.75 * (wheel diameter)^2 + (wheel width)^2) / 12
+acceleration (rad/s^2) <- turn ka * (turn voltage - turn velocity / turn kv) / moment of inertia / turn resistance / turn gear ratio
+velocity (rad/s) <- turn kv * (turn voltage - torque from friction * turn resistance / turn ka) / turn gear ratio
+
+drive math
+normal force (lb) <- robot weight / number of wheels
+torque from rolling resistance (in*lb) <- .5 * wheel diameter * normal force * coefficient of rolling resistance
+torque from robot (in*lb) <- .5 * wheel diameter * normal force
+total torque (in*lb) <- torque from rolling resistance + torque from robot
+moment of inertia (lb*in^2) <- wheel weight * (wheel diameter)^2 / 8
+acceleration (rad/s^2) <- drive ka * (drive voltage - drive velocity / drive kv) / moment of inertia / drive resistance / drive gear ratio
+velocity (rad/s) <- drive kv * (drive voltage - total torque * drive resistance / drive ka / drive gear ratio) / drive gear ratio
+
+state equation steps
+tbd
+
+output equation steps
+turn angle (deg) <- turn angle * 180 / pi
+drive velocity (m/s) <- .5 * drive velocity * wheel diameter / 12 in/ft / 3.28 ft/m
