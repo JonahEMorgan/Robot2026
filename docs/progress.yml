@@ -1,0 +1,231 @@
+---
+Commands:
+  - &toggleCoastMode
+    Name: toggleCoastMode 
+    Description: Toggles between coasting and braking when the motors are idling.
+    Subsystem: Drive
+    Progress: 100%
+    Implementation Level: Polished
+
+  - &driveCommand
+    Name: driveCommand
+    Description: Drives the robot using joysticks and can either be robot relative or field relative.
+    Subsystem: Drive
+    Progress: 100%
+    Implementation Level: Polished
+
+  - &resetHeading
+    Name: resetHeading
+    Description: Resets the heading of the NavX to zero.
+    Subsystem: Drive
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &resetOdometry
+    Name: resetOdometry
+    Description: Resets the odometry to a specified starting pose.
+    Subsystem: Drive
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &testCommand
+    Name: testCommand
+    Description: Tests the drive subsystem by moving in each axis.
+    Subsystem: Drive
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &deployRollers
+    Name: deployRollers
+    Description: Lowers the intake towards the field so that the rollers contact the fuel.
+    Subsystem: Intake
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &retractRollers
+    Name: retractRollers
+    Description: Raises the intake into the robot to stow it away when not in use.
+    Subsystem: Intake
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &intake_moveForTime
+    Name: moveForTime
+    Description: Moves the intake for a specified amount of time at a fixed speed.
+    Subsystem: Intake
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &intake_moveWithTrigger
+    Name: moveWithTrigger
+    Description: Moves the intake at a fixed speed when a button is pressed.
+    Subsystem: Intake
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &transport_moveForTime
+    Name: moveForTime
+    Description: Moves the transport for a specified amount of time at a fixed speed.
+    Subsystem: Transport
+    Progress: 100%
+    Implementation Level: Untested
+  
+  - &transport_moveWithTrigger
+    Name: moveWithTrigger
+    Description: Moves the transport at a fixed speed when a button is pressed.
+    Subsystem: Transport
+    Progress: 100%
+    Implementation Level: Untested
+  
+  - &shooter_moveForTime
+    Name: moveForTime
+    Description: Moves the shooter for a specified amount of time at a fixed speed.
+    Subsystem: Shooter
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &shooter_moveWithTrigger
+    Name: moveWithTrigger
+    Description: Moves the shooter at a fixed speed when a button is pressed.
+    Subsystem: Shooter
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &climber_moveForTime
+    Name: moveForTime
+    Description: Moves the climber for a specified amount of time at a fixed speed.
+    Subsystem: Climber
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &climber_moveWithTrigger
+    Name: moveWithTrigger
+    Description: Moves the climber at a fixed speed when a button is pressed.
+    Subsystem: Climber
+    Progress: 75%
+    Implementation Level: Draft
+  
+  - &aimWithJoystick
+    Name: aimWithJoystick
+    Description: Aims the turret by moving in the direction of the joystick.
+    Subsystem: Turret
+    Progress: 50%
+    Implementation Level: Draft
+
+  - &aimAtAngle
+    Name: aimAtAngle
+    Description: Aims the turret in a specific direction using the PID controllers.
+    Subsystem: Turret
+    Progress: 50%
+    Implementation Level: Draft
+  
+
+
+Subsystems:
+  - Name: Drive
+    Description: The drive subsystem allows the robot to traverse the field, translating and rotating its position.
+    Progress: 100%
+    Implementation Level: Polished
+    Commands:
+      - *toggleCoastMode
+      - *driveCommand
+      - *resetHeading
+      - *resetOdometry
+      - *testCommand
+    Algorithms:
+      - Robot heading: PID controller
+    Sensors:
+      - Front right encoder: CAN id 12
+      - Back right encoder: CAN id 22
+      - Back left encoder: CAN id 32
+      - Front left encoder: CAN id 42
+      - NavX: MXP port
+    Motors:
+      - Front right drive: CAN id 10
+      - Back right drive: CAN id 20
+      - Back left drive: CAN id 30
+      - Front left drive: CAN id 40
+      - Front right steer: CAN id 11
+      - Back right steer: CAN id 21
+      - Back left steer: CAN id 31
+      - Front left steer: CAN id 41
+    Button Bindings:
+      - Left Stick All: Translational movement
+      - L2: Turn left
+      - R2: Turn right
+      - Create: Toggle field relative and robot relative
+
+  - Name: Intake
+    Description: The intake subsystem collects fuel from the field and indexes it into the transport.
+    Progress: 75%
+    Implementation Level: Draft
+    Commands:
+      - *deployRollers
+      - *retractRollers
+      - *intake_moveForTime
+      - *intake_moveWithTrigger
+    Motors:
+      - Deploy motor: CAN id TBD
+      - Roller motor: CAN id TBD
+    Button Bindings:
+      - R1: Spin rollers inward
+      - L1: Spin rollers outward
+      - Circle: Deploy & retract rollers
+    
+  - Name: Transport
+    Description: The transport subsystem stores fuel and allows it to move from the intake to the shooter.
+    Progress: 100%
+    Implementation Level: Untested
+    Commands:
+      - *transport_moveForTime
+      - *transport_moveWithTrigger
+    Motors:
+      - Intake motor: CAN id TBD
+    Button Bindings:
+      - Triangle: Move fuel into shooter
+      - Cross: Move fuel out of shooter
+  
+  - Name: Shooter
+    Description: The shooter subsystem uses a flywheel to launch fuel from the robot.
+    Progress: 75%
+    Implementation Level: Draft
+    Commands:
+      - *shooter_moveForTime
+      - *shooter_moveWithTrigger
+    Motors:
+      - Shooter motor: CAN id TBD
+    Button Bindings:
+      - Square: Spin shooter
+
+  - Name: Climber
+    Description: The climber subsystem moves up and down to attach to the tower.
+    Progress: 75%
+    Implementation Level: Draft
+    Commands:
+      - *climber_moveForTime
+      - *climber_moveWithTrigger
+    Motors:
+      - Climber motor: CAN id TBD
+    Button Bindings:
+      - D-pad Up: Climber up
+      - D-pad Down: Climber down
+
+  - Name: Turret
+    Description: The turret subsystem aims the shooter in order to land fuel in the hub.
+    Progress: 50%
+    Implementation Level: Draft
+    Commands:
+      - *aimWithJoystick
+      - *aimAtAngle
+    Algorithms:
+      - Turret yaw: PID controller
+      - Turret pitch: PID controller
+    Sensors:
+      - Turret yaw encoder: Alternate encoder port
+      - Turret pitch encoder: Alternate encoder port
+    Motors:
+      - Yaw motor: CAN id TBD
+      - Pitch motor: CAN id TBD
+    Button Bindings:
+      - Right Stick All: Aim turret
+...
