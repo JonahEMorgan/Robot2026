@@ -23,7 +23,7 @@ jobs:
 
       - name: Generate progress site with uv
         run: |
-          cd progress
+          cd docs
           uv run . progress.yml
 
       - name: Copy output to dist folder
