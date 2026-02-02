@@ -29,7 +29,7 @@ jobs:
       - name: Copy output to dist folder
         run: |
           mkdir -p dist/${GITHUB_REF_NAME}
-          cp progress/index.html dist/${GITHUB_REF_NAME}/index.html
+          cp docs/index.html dist/${GITHUB_REF_NAME}/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
