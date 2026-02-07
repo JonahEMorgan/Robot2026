@@ -9,25 +9,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import frc.robot.commands.RunShooterAtRPS;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Intake;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Transport;
-import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
 	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
 
-	private final Drive m_driveSubsystem = new Drive();
-	private final Transport m_transportSubsystem = new Transport();
-	private final Intake m_intakeSubsystem = new Intake();
+	/*
+	 * private final Drive m_driveSubsystem = new Drive();
+	 * private final Transport m_transportSubsystem = new Transport();
+	 * private final Intake m_intakeSubsystem = new Intake();
+	 */
 	private final Shooter m_shooterSubsystem = new Shooter();
-	private final Turret m_turretSubsystem = new Turret();
-	private final Climber m_climberSubsystem = new Climber();
+	/*
+	 * private final Turret m_turretSubsystem = new Turret();
+	 * private final Climber m_climberSubsystem = new Climber();
+	 */
 	private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 	private final CommandPS5Controller m_joystick = new CommandPS5Controller(
 			Constants.ControllerConstants.kDriverControllerPort);
@@ -37,31 +37,38 @@ public class Robot extends TimedRobot {
 	}
 
 	private void BindDriveControls() {
-		m_driveSubsystem.setDefaultCommand(
-				m_driveSubsystem.driveCommand(
-						() -> -m_joystick.getLeftY(), () -> -m_joystick.getLeftX(),
-						() -> m_joystick.getL2Axis() - m_joystick.getR2Axis(), m_joystick.getHID()::getCreateButton));
-		m_transportSubsystem.setDefaultCommand(
-				m_transportSubsystem.moveWithTrigger(
-						m_joystick.triangle(),
-						m_joystick.cross()));
-		m_intakeSubsystem.setDefaultCommand(
-				m_intakeSubsystem.moveWithTrigger(
-						m_joystick.R1(),
-						m_joystick.L1()));
-		m_joystick.circle().onTrue(
-				m_intakeSubsystem.deployRollers());
-		m_joystick.circle().onTrue(
-				m_intakeSubsystem.retractRollers());
-		m_shooterSubsystem.setDefaultCommand(
-				new RunShooterAtRPS(m_shooterSubsystem, 5500.0 / 60.0));
-		m_turretSubsystem.setDefaultCommand(
-				m_turretSubsystem.aimWithJoystick(
-						m_joystick::getLeftX,
-						m_joystick::getLeftY));
-		m_climberSubsystem.setDefaultCommand(
-				m_climberSubsystem.moveWithTrigger(
-						m_joystick.povUp(), m_joystick.povDown()));
+		/*
+		 * m_driveSubsystem.setDefaultCommand(
+		 * m_driveSubsystem.driveCommand(
+		 * () -> -m_joystick.getLeftY(), () -> -m_joystick.getLeftX(),
+		 * () -> m_joystick.getL2Axis() - m_joystick.getR2Axis(),
+		 * m_joystick.getHID()::getCreateButton));
+		 * m_transportSubsystem.setDefaultCommand(
+		 * m_transportSubsystem.moveWithTrigger(
+		 * m_joystick.triangle(),
+		 * m_joystick.cross()));
+		 * m_intakeSubsystem.setDefaultCommand(
+		 * m_intakeSubsystem.moveWithTrigger(
+		 * m_joystick.R1(),
+		 * m_joystick.L1()));
+		 * m_joystick.circle().onTrue(
+		 * m_intakeSubsystem.deployRollers());
+		 * m_joystick.circle().onTrue(
+		 * m_intakeSubsystem.retractRollers());
+		 */
+		/*
+		 * m_shooterSubsystem.setDefaultCommand(
+		 * new ShooterCommand.RunAtPower(m_shooterSubsystem, .1, 10));
+		 */
+		/*
+		 * m_turretSubsystem.setDefaultCommand(
+		 * m_turretSubsystem.aimWithJoystick(
+		 * m_joystick::getLeftX,
+		 * m_joystick::getLeftY));
+		 * m_climberSubsystem.setDefaultCommand(
+		 * m_climberSubsystem.moveWithTrigger(
+		 * m_joystick.povUp(), m_joystick.povDown()));
+		 */
 	}
 
 	@Override
@@ -87,11 +94,15 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_autoChooser.getSelected();
-
-		if (m_autonomousCommand != null) {
-			m_scheduler.schedule(m_autonomousCommand);
-		}
+		/*
+		 * m_autonomousCommand = m_autoChooser.getSelected();
+		 * if (m_autonomousCommand != null) {
+		 * m_scheduler.schedule(m_autonomousCommand);
+		 * }
+		 */
+		CommandScheduler.getInstance().schedule(
+				Commands.sequence(
+						new ShooterCommand.RunAtDynamicRpm(m_shooterSubsystem, 2400).withTimeout(10)));
 	}
 
 	@Override
