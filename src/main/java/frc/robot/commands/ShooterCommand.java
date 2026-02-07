@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -99,7 +101,9 @@ public class ShooterCommand {
 		/** Creates a new runShooter. */
 		public RunAtDynamicRpm(Shooter shooter, double rpm) {
 			m_shooter = shooter;
-			m_request = new VelocityVoltage(rpm);
+			m_request = new VelocityVoltage(RPM.of(rpm))
+					.withFeedForward(rpm / m_shooter.getRPMperVolt());
+
 			setName("Run Shooter At RPM");
 			addRequirements(shooter);
 		}

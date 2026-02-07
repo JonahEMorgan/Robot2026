@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
 		m_scheduler.run();
 
 		SmartDashboard.putData(m_scheduler);
+		SmartDashboard.putNumber("rpm", m_shooterSubsystem.getRPM());
 	}
 
 	@Override
@@ -102,7 +103,7 @@ public class Robot extends TimedRobot {
 		 */
 		CommandScheduler.getInstance().schedule(
 				Commands.sequence(
-						new ShooterCommand.RunAtDynamicRpm(m_shooterSubsystem, 2400).withTimeout(10)));
+						new ShooterCommand.RunAtDynamicRpm(m_shooterSubsystem, 2400).withTimeout(40)));
 	}
 
 	@Override
