@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.commands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,12 +22,6 @@ public class RunTurretToDistance extends Command {
 		m_speed = speed;
 	}
 
-	// Called when the command is initially scheduled.
-	@Override
-	public void initialize() {
-		m_turretSubsystem.resetEncoder();
-	}
-
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
@@ -45,6 +39,6 @@ public class RunTurretToDistance extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return (m_turretSubsystem.getPosition() / 5) / 39.1 >= m_rot;
+		return m_turretSubsystem.getPosition() / 360 >= m_rot;
 	}
 }
