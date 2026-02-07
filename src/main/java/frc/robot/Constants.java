@@ -10,18 +10,10 @@ import frc.robot.Compliance.FixMe;
 public class Constants {
 	public static final class Subsystems {
 		public static final class TurretConstants {
-			public static final double kDeadzone = .05;
+			public static final double maxDutyCycle = 0.1;
 
 			public static final class Yaw {
-				@FixMe(reason = "Talk to electrical")
-				public static final int kMotorPort = -1;
-				@FixMe(reason = "Tune value")
-				public static final double kP = 0;
-			}
-
-			public static final class Pitch {
-				@FixMe(reason = "Talk to electrical")
-				public static final int kMotorPort = -1;
+				public static final int kMotorPort = 1;
 				@FixMe(reason = "Tune value")
 				public static final double kP = 0;
 			}
