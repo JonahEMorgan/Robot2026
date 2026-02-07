@@ -84,7 +84,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_autonomousCommand = Commands.sequence(
-				new RunTurretToAngle(m_turretSubsystem, 45));// ,
+				new RunTurretToAngle(m_turretSubsystem, 45),
+				new RunTurretToAngle(m_turretSubsystem, 225),
+				new RunTurretToAngle(m_turretSubsystem, 45),
+				new RunTurretToAngle(m_turretSubsystem, 225));// ,
 		// new RunTurretToAngle(m_turretSubsystem, -45),
 		// new RunTurretToAngle(m_turretSubsystem, 90));
 
@@ -129,5 +132,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testExit() {
+
 	}
 }

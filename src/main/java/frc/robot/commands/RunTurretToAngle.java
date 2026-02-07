@@ -13,10 +13,10 @@ import frc.robot.subsystems.Turret;
 public class RunTurretToAngle extends Command {
 	private final Turret m_turretSubsystem;
 	private final double m_angle;
-	private final static double kMinPower = 0.05;
+	private final static double kMinPower = 0.025;
 	private final static double kMaxPower = 0.25;
 	private final static double kMaxErr = 25;
-	private final static double kTolerance = 2;
+	private final static double kTolerance = 1;
 
 	/** Creates a new RunTurretAtSpeed. */
 	public RunTurretToAngle(Turret turretSubsystem, double angle) {
@@ -44,6 +44,6 @@ public class RunTurretToAngle extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return false;// Math.abs(m_turretSubsystem.getPosition() - m_angle) < kTolerance;
+		return Math.abs(m_turretSubsystem.getPosition() - m_angle) < kTolerance;
 	}
 }
