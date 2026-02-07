@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PhysicalSwerveSim;
+import frc.robot.subsystems.PhysicalTurretSim;
 
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
@@ -24,6 +25,7 @@ public class Robot extends TimedRobot {
 	private final CommandPS5Controller m_joystick = new CommandPS5Controller(
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final PhysicalSwerveSim m_swerveSim = new PhysicalSwerveSim();
+	private final PhysicalTurretSim m_turretSim = new PhysicalTurretSim();
 	private final Timer m_timer = new Timer();
 
 	public Robot() {
@@ -43,6 +45,7 @@ public class Robot extends TimedRobot {
 		SwerveModuleState state = m_swerveSim.getModuleState();
 		SmartDashboard.putNumber("Velocity (m per s)", state.speedMetersPerSecond);
 		SmartDashboard.putNumber("Angle (deg)", state.angle.getDegrees());
+		SmartDashboard.putNumber("Turret angle (deg)", m_turretSim.getAngle().getDegrees());
 		m_scheduler.run();
 
 		SmartDashboard.putData(m_scheduler);
@@ -93,6 +96,7 @@ public class Robot extends TimedRobot {
 		double volts = m_timer.get() / 5;
 		SmartDashboard.putNumber("Voltage", volts);
 		m_swerveSim.simulate(getPeriod(), 0, volts);
+		m_turretSim.simulate(getPeriod(), volts);
 	}
 
 	@Override

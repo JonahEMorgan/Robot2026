@@ -159,7 +159,7 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Calculates module states from a chassis speeds.
 	 * 
-	 * @param speeds The chassis speeds.
+	 * @param speeds          The chassis speeds.
 	 * @param isFieldRelative Whether or not the chassis speeds is field relative.
 	 * @return The module states, in order of FL, FR, BL, BR
 	 */
@@ -219,7 +219,7 @@ public class DriveSubsystem extends SubsystemBase {
 		return runOnce(
 				() -> setDriveMotorNeutralMode(
 						coastState.shouldBeCoast() ? NeutralModeValue.Coast : NeutralModeValue.Brake))
-								.withName("Drive Toggle Coast Mode");
+				.withName("Drive Toggle Coast Mode");
 	}
 
 	public Command setNeutralMode(NeutralModeValue mode) {
@@ -230,11 +230,11 @@ public class DriveSubsystem extends SubsystemBase {
 	 * Creates a {@code Command} to drive the robot with joystick input.
 	 *
 	 * @param forwardSpeed Forward speed supplier. Positive values make the robot
-	 *        go forward (+X direction).
-	 * @param strafeSpeed Strafe speed supplier. Positive values make the robot
-	 *        go to the left (+Y direction).
-	 * @param rotation Rotation supplier. Positive values make
-	 *        the robot rotate left (CCW direction).
+	 *                     go forward (+X direction).
+	 * @param strafeSpeed  Strafe speed supplier. Positive values make the robot
+	 *                     go to the left (+Y direction).
+	 * @param rotation     Rotation supplier. Positive values make
+	 *                     the robot rotate left (CCW direction).
 	 * @return a {@code ChassisSpeeds} instance to drive the robot with joystick
 	 *         input
 	 */
@@ -245,7 +245,7 @@ public class DriveSubsystem extends SubsystemBase {
 						calculateModuleStates(
 								chassisSpeeds(forwardSpeed, strafeSpeed, rotation), isRobotRelative.getAsBoolean())),
 				this::stopAllModules)
-						.withName("DefaultDriveCommand");
+				.withName("DefaultDriveCommand");
 	}
 
 	/**
@@ -253,11 +253,11 @@ public class DriveSubsystem extends SubsystemBase {
 	 * input.
 	 *
 	 * @param forwardSpeed Forward speed supplier. Positive values make the robot
-	 *        go forward (+X direction).
-	 * @param strafeSpeed Strafe speed supplier. Positive values make the robot
-	 *        go to the left (+Y direction).
-	 * @param rotation Rotation supplier. Positive values make
-	 *        the robot rotate left (CCW direction).
+	 *                     go forward (+X direction).
+	 * @param strafeSpeed  Strafe speed supplier. Positive values make the robot
+	 *                     go to the left (+Y direction).
+	 * @param rotation     Rotation supplier. Positive values make
+	 *                     the robot rotate left (CCW direction).
 	 * @return a {@code ChassisSpeeds} instance to drive the robot with joystick
 	 *         input
 	 */

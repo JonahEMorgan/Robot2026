@@ -7,13 +7,16 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.CurrentUnit;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.TorqueUnit;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Resistance;
+import edu.wpi.first.units.measure.Voltage;
 
 public class PhysicalTurretSim {
 	private Angle m_angle = Radians.zero();
@@ -39,7 +42,12 @@ public class PhysicalTurretSim {
 	}
 
 	public void simulate(double seconds, double voltage) {
-
+		Voltage potential = Volts.of(voltage).minus(m_velocity.divideRatio(m_kV));
+		Measure<TorqueUnit> torque = potential.div(m_resistance).timesRatio(m_kA).times(m_gearRatio);
+		AngularAcceleration acceleration = RadiansPerSecondPerSecond
+				.of(torque.in(NewtonMeters) / m_inertia.in(KilogramSquareMeters));
+		m_angle = m_angle.plus(m_velocity.times(Seconds.of(seconds)));
+		m_velocity = m_velocity.plus(acceleration.times(Seconds.of(seconds)));
 	}
 
 	public Rotation2d getAngle() {
