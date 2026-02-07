@@ -7,6 +7,24 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
+	public static final class Subsystems {
+		public static final class TurretConstants {
+			public static final double kMaxDutyCycle = 0.5;
+			public final static double kGearRatio = 1;
+			public final static double kMinPower = 0.025;
+			public final static double kMaxPower = 0.25;
+			public final static double kMaxErr = 25;
+			public final static double kTolerance = 1;
+			public final static double kP = 0.01;
+		}
+
+		public static final class ShooterConstants {
+			public static final int kMotorPort = 56;
+			public static final double kCurrentLimit = 30;
+			public static final double kV = 480;
+		}
+	}
+
 	public static final class ControllerConstants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
