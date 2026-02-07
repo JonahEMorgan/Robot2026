@@ -5,55 +5,55 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Compliance.FixMe;
+//import frc.robot.Compliance.FixMe;
 
 public class Constants {
 	public static final class Subsystems {
 		public static final class TurretConstants {
-			public static final double maxDutyCycle = 0.1;
+			public static final double maxDutyCycle = 0.5;
 
 			public static final class Yaw {
 				public static final int kMotorPort = 1;
-				@FixMe(reason = "Tune value")
+				// @FixMe(reason = "Tune value")
 				public static final double kP = 0;
 			}
 		}
 
 		public static final class TransportConstants {
-			@FixMe(reason = "Talk to electrical")
+			// @FixMe(reason = "Talk to electrical")
 			public static final int kMotorPort = -1;
-			@FixMe(reason = "Determine speed")
+			// @FixMe(reason = "Determine speed")
 			public static final double kDefaultSpeed = 0;
 		}
 
 		public static final class ShooterConstants {
-			@FixMe(reason = "Talk to electrical")
+			// @FixMe(reason = "Talk to electrical")
 			public static final int kMotorPort = -1;
-			@FixMe(reason = "Determine speed")
+			// @FixMe(reason = "Determine speed")
 			public static final double kDefaultSpeed = 0;
 		}
 
 		public static final class ClimberConstants {
-			@FixMe(reason = "Talk to electrical")
+			// @FixMe(reason = "Talk to electrical")
 			public static final int kMotorPort = -1;
-			@FixMe(reason = "Determine speed")
+			// @FixMe(reason = "Determine speed")
 			public static final double kDefaultSpeed = 0;
 		}
 
 		public static final class IntakeConstants {
-			@FixMe(reason = "Talk to electrical")
+			// @FixMe(reason = "Talk to electrical")
 			public static final int kRollerPort = -1;
-			@FixMe(reason = "Talk to electrical")
+			// @FixMe(reason = "Talk to electrical")
 			public static final int kDeployPort = -1;
-			@FixMe(reason = "Determine speed")
+			// @FixMe(reason = "Determine speed")
 			public static final double kDefaultSpeed = 0;
-			@FixMe(reason = "Determine angle")
+			// @FixMe(reason = "Determine angle")
 			public static final double kRetractAngle = 0;
-			@FixMe(reason = "Determine angle")
+			// @FixMe(reason = "Determine angle")
 			public static final double kDeployAngle = 0;
-			@FixMe(reason = "Tune value")
+			// @FixMe(reason = "Tune value")
 			public static final double kP = 0;
-			@FixMe(reason = "Determine velocity")
+			// @FixMe(reason = "Determine velocity")
 			public static final double kStationaryVelocity = 0;
 		}
 	}

@@ -1,8 +1,12 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsystems.TurretConstants;
@@ -12,6 +16,7 @@ import frc.robot.Constants.Subsystems.TurretConstants;
  * adjust the direction fuel will exit the shooter.
  */
 public class Turret extends SubsystemBase {
+	private final static double kGearRatio = 1;
 	/**
 	 * The yaw motor allows the mechanism to pivot left and right.
 	 */
@@ -19,7 +24,7 @@ public class Turret extends SubsystemBase {
 	/**
 	 * The through bore encoder on the yaw axis allows us to check the yaw angle.
 	 */
-	private final RelativeEncoder m_encoder;
+	private final SparkAbsoluteEncoder m_encoder;
 	/**
 	 * The through bore encoder on the pitch axis allows us to check the pitch
 	 * angle.
@@ -38,13 +43,13 @@ public class Turret extends SubsystemBase {
 	 * Creates a new subsystem using the motor id's from the turret constants, the
 	 * corresponding pid constants from the turret constants, and a proper name.
 	 */
-	public Turret(int index) {
-		m_motor = new SparkMax(index, MotorType.kBrushless);
-		m_encoder = m_motor.getEncoder();
-	}
-
-	public void resetEncoder() {
-		m_encoder.setPosition(0);
+	public Turret() {
+		m_motor = new SparkMax(2, MotorType.kBrushless);
+		SparkMaxConfig config = new SparkMaxConfig();
+		config.idleMode(IdleMode.kCoast);
+		config.absoluteEncoder.positionConversionFactor(360 / kGearRatio);
+		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		m_encoder = m_motor.getAbsoluteEncoder();
 	}
 
 	public double getPosition() {

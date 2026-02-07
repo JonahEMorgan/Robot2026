@@ -8,8 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import frc.robot.commands.RunTurretToDistance;
+import frc.robot.commands.RunTurretToAngle;
 import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
@@ -21,7 +22,7 @@ public class Robot extends TimedRobot {
 	 * private final Intake m_intakeSubsystem = new Intake();
 	 * private final Shooter m_shooterSubsystem = new Shooter();
 	 */
-	private final Turret m_turretSubsystem = new Turret(1);
+	private final Turret m_turretSubsystem = new Turret();
 	// private final Climber m_climberSubsystem = new Climber();
 	private final SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
 	private final CommandPS5Controller m_joystick = new CommandPS5Controller(
@@ -82,7 +83,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = new RunTurretToDistance(m_turretSubsystem, 0.1, 10);// m_autoChooser.getSelected();
+		m_autonomousCommand = Commands.sequence(
+				new RunTurretToAngle(m_turretSubsystem, 45));// ,
+		// new RunTurretToAngle(m_turretSubsystem, -45),
+		// new RunTurretToAngle(m_turretSubsystem, 90));
 
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.schedule();
@@ -116,6 +120,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		CommandScheduler.getInstance().cancelAll();
+		CommandScheduler.getInstance().schedule(ClampedP.testCommand());
 	}
 
 	@Override
