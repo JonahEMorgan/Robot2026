@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsystems.TurretConstants;
+import frc.robot.commands.TurretCommand;
 
 /**
  * A subsystem which has the ability to change both yaw and pitch in order to
@@ -72,5 +73,9 @@ public class Turret extends SubsystemBase {
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
 
 		m_motor.set(dutyCycle * sign);
+	}
+
+	public TurretCommand getCommand() {
+		return new TurretCommand(this);
 	}
 }

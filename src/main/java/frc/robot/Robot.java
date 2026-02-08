@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import frc.robot.commands.RunTurretToAngleHardware;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Shooter;
@@ -29,6 +28,9 @@ public class Robot extends TimedRobot {
 	}
 
 	private void BindDriveControls() {
+		m_turretSubsystem.setDefaultCommand(
+				m_turretSubsystem.getCommand().new RunToAngleHardwareSignal(m_joystick::getLeftX,
+						m_joystick::getLeftY));
 		/*
 		 * m_driveSubsystem.setDefaultCommand(
 		 * m_driveSubsystem.driveCommand(
@@ -87,13 +89,13 @@ public class Robot extends TimedRobot {
 		m_scheduler.schedule(
 				Commands.parallel(
 						Commands.sequence(
-								new RunTurretToAngleHardware(m_turretSubsystem, 45),
+								m_turretSubsystem.getCommand().new RunToAngleHardware(45),
 								Commands.waitSeconds(1),
-								new RunTurretToAngleHardware(m_turretSubsystem, 225),
+								m_turretSubsystem.getCommand().new RunToAngleHardware(225),
 								Commands.waitSeconds(1),
-								new RunTurretToAngleHardware(m_turretSubsystem, 45),
+								m_turretSubsystem.getCommand().new RunToAngleHardware(45),
 								Commands.waitSeconds(1),
-								new RunTurretToAngleHardware(m_turretSubsystem, 225)),
+								m_turretSubsystem.getCommand().new RunToAngleHardware(225)),
 						new ShooterCommand.RunAtDynamicRPM(m_shooterSubsystem, 2400).withTimeout(40)));
 	}
 
