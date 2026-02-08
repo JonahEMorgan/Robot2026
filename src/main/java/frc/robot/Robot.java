@@ -31,6 +31,8 @@ public class Robot extends TimedRobot {
 		m_turretSubsystem.setDefaultCommand(
 				m_turretSubsystem.getCommand().new RunToAngleHardwareSignal(m_joystick::getLeftX,
 						m_joystick::getLeftY));
+		m_joystick.L1().whileTrue(m_turretSubsystem.getCommand().new RunAtPower(-.1, 0));
+		m_joystick.R1().whileTrue(m_turretSubsystem.getCommand().new RunAtPower(.1, 0));
 		/*
 		 * m_driveSubsystem.setDefaultCommand(
 		 * m_driveSubsystem.driveCommand(
@@ -96,7 +98,9 @@ public class Robot extends TimedRobot {
 								m_turretSubsystem.getCommand().new RunToAngleHardware(45),
 								Commands.waitSeconds(1),
 								m_turretSubsystem.getCommand().new RunToAngleHardware(225)),
-						new ShooterCommand.RunAtDynamicRPM(m_shooterSubsystem, 2400).withTimeout(40)));
+						new ShooterCommand.RunAtDynamicRPM(m_shooterSubsystem,
+								2400).withTimeout(40)));
+
 	}
 
 	@Override

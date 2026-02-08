@@ -37,7 +37,7 @@ public class TurretCommand {
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			m_turretSubsystem.runMotorAtDutyCycle(0);
+			m_turretSubsystem.stop();
 		}
 
 		// Returns true when the command should end.
@@ -47,12 +47,14 @@ public class TurretCommand {
 		}
 	}
 
+	/**
+	 * Used to control the turret with joystick direction (not magnitude).
+	 */
 	public class RunToAngleHardwareSignal extends Command {
 
 		private final DoubleSupplier m_x;
 		private final DoubleSupplier m_y;
 
-		/** Creates a new RunTurretAtSpeed. */
 		public RunToAngleHardwareSignal(DoubleSupplier x, DoubleSupplier y) {
 			addRequirements(m_turretSubsystem);
 			m_x = x;
@@ -65,8 +67,8 @@ public class TurretCommand {
 			SmartDashboard.putNumber("Position", m_turretSubsystem.getPosition());
 			double x = m_x.getAsDouble();
 			double y = m_y.getAsDouble();
-			if (Math.hypot(x, y) > 0.5) {
-				double angle = Units.radiansToDegrees(Math.atan2(y, x));
+			if (Math.hypot(x, y) > TurretConstants.kDeadzone) {
+				double angle = Units.radiansToDegrees(Math.atan2(y, x)) + 180;
 				m_turretSubsystem.setAngle(angle);
 			}
 		}
@@ -74,7 +76,7 @@ public class TurretCommand {
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			m_turretSubsystem.runMotorAtDutyCycle(0);
+			m_turretSubsystem.stop();
 		}
 
 		// Returns true when the command should end.
@@ -84,11 +86,10 @@ public class TurretCommand {
 		}
 	}
 
-	public class RunToAngle extends Command {
+	public class RunToAngleSoftware extends Command {
 		private final double m_angle;
 
-		/** Creates a new RunTurretAtSpeed. */
-		public RunToAngle(double angle) {
+		public RunToAngleSoftware(double angle) {
 			addRequirements(m_turretSubsystem);
 			m_angle = angle;
 		}
@@ -108,7 +109,7 @@ public class TurretCommand {
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			m_turretSubsystem.runMotorAtDutyCycle(0);
+			m_turretSubsystem.stop();
 		}
 
 		// Returns true when the command should end.
@@ -118,17 +119,11 @@ public class TurretCommand {
 		}
 	}
 
-	/*
-	 * You should consider using the more terse Command factories API instead
-	 * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-
-	 * command-based.html#defining-commands
-	 */
 	public class RunAtPower extends Command {
 		private Timer m_timer;
 		private double m_time;
 		private double m_speed;
 
-		/** Creates a new RunTurretAtSpeed. */
 		public RunAtPower(double speed, double time) {
 			addRequirements(m_turretSubsystem);
 			m_timer = new Timer();
@@ -159,6 +154,8 @@ public class TurretCommand {
 		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
+			if (m_time <= 0)
+				return false;
 			return m_timer.get() >= m_time;
 		}
 	}
@@ -166,7 +163,6 @@ public class TurretCommand {
 	public class RunAtPowerSignal extends Command {
 		private DoubleSupplier m_speed;
 
-		/** Creates a new RunTurretAtSpeed. */
 		public RunAtPowerSignal(DoubleSupplier speed) {
 			addRequirements(m_turretSubsystem);
 			m_speed = speed;

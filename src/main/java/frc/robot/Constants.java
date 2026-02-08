@@ -17,6 +17,7 @@ public class Constants {
 			public final static double kMaxErr = 25;
 			public final static double kTolerance = 1;
 			public final static double kP = 0.01;
+			public final static double kDeadzone = 0.5; // For the X/Y joystick control
 		}
 
 		public static final class ShooterConstants {
