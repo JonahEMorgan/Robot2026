@@ -29,10 +29,35 @@ public class Robot extends TimedRobot {
 	}
 
 	private void BindDriveControls() {
-		m_driveSubsystem.setDefaultCommand(
-				m_driveSubsystem.driveCommand(
-						() -> -m_joystick.getLeftY(), () -> -m_joystick.getLeftX(),
-						() -> m_joystick.getL2Axis() - m_joystick.getR2Axis(), m_joystick.getHID()::getCreateButton));
+		/*
+		 * m_driveSubsystem.setDefaultCommand(
+		 * m_driveSubsystem.driveCommand(
+		 * () -> -m_joystick.getLeftY(), () -> -m_joystick.getLeftX(),
+		 * () -> m_joystick.getL2Axis() - m_joystick.getR2Axis(),
+		 * m_joystick.getHID()::getCreateButton));
+		 * m_transportSubsystem.setDefaultCommand(
+		 * m_transportSubsystem.moveWithTrigger(
+		 * m_joystick.triangle(),
+		 * m_joystick.cross()));
+		 * m_intakeSubsystem.setDefaultCommand(
+		 * m_intakeSubsystem.moveWithTrigger(
+		 * m_joystick.R1(),
+		 * m_joystick.L1()));
+		 * m_joystick.circle().onTrue(
+		 * m_intakeSubsystem.deployRollers());
+		 * m_joystick.circle().onTrue(
+		 * m_intakeSubsystem.retractRollers());
+		 * m_shooterSubsystem.setDefaultCommand(
+		 * m_shooterSubsystem.moveWithTrigger(
+		 * m_joystick.square(), null));
+		 * m_turretSubsystem.setDefaultCommand(
+		 * m_turretSubsystem.aimWithJoystick(
+		 * m_joystick::getLeftX,
+		 * m_joystick::getLeftY));
+		 * m_climberSubsystem.setDefaultCommand(
+		 * m_climberSubsystem.moveWithTrigger(
+		 * m_joystick.povUp(), m_joystick.povDown()));
+		 */
 	}
 
 	@Override
