@@ -6,13 +6,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Subsystems.TurretConstants;
 import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunTurretToAngleHardware extends Command {
 	private final Turret m_turretSubsystem;
 	private final double m_angle;
-	private final static double kTolerance = 1;
 
 	/** Creates a new RunTurretAtSpeed. */
 	public RunTurretToAngleHardware(Turret turretSubsystem, double angle) {
@@ -37,6 +37,6 @@ public class RunTurretToAngleHardware extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return Math.abs(m_turretSubsystem.getPosition() - m_angle) < kTolerance;
+		return Math.abs(m_turretSubsystem.getPosition() - m_angle) < TurretConstants.kTolerance;
 	}
 }

@@ -1,38 +1,52 @@
 package frc.robot.subsystems;
 
-import frc.robot.Compliance;
+import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsystems.ShooterConstants;
 
-/**
- * A subsystem which spins the shooter and launches fuel.
- */
-public class Shooter extends BasicMotorSubsystem {
-	/**
-	 * Creates a new subsystem with a proper name
-	 */
+public class Shooter extends SubsystemBase {
+
+	private final TalonFX m_TalonFX = new TalonFX(ShooterConstants.kMotorPort);
+
 	public Shooter() {
-		super();
-		setName("Shooter subsystem");
+		TalonFXConfiguration config = new TalonFXConfiguration();
+		config.CurrentLimits.StatorCurrentLimit = ShooterConstants.kCurrentLimit;
+		config.CurrentLimits.StatorCurrentLimitEnable = true;
+		config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+		config.Slot0.kP = 0.4000;
+		config.Slot0.kI = 0;
+		config.Slot0.kD = 0;
+
+		m_TalonFX.getConfigurator().apply(config);
 	}
 
-	/**
-	 * Gets the CAN id from the shooter constants for the motor controller.
-	 *
-	 * @return CAN id
-	 */
-	@Override
-	protected int getMotorId() {
-		return Compliance.ensure(ShooterConstants.class, "kMotorPort");
+	public void velocityVoltage(VelocityVoltage request) {
+		m_TalonFX.setControl(request);
 	}
 
-	/**
-	 * Gets the default speed from the shooter constants for the motor.
-	 *
-	 * @return default speed
-	 */
-	@Override
-	protected double getDefaultSpeed() {
-		return Compliance.ensure(ShooterConstants.class, "kDefaultSpeed");
+	public void stop() {
+		m_TalonFX.set(0);
 	}
 
+	public void setPower(double power) {
+		m_TalonFX.set(power);
+	}
+
+	public void setVoltage(double voltage) {
+		m_TalonFX.setVoltage(voltage);
+	}
+
+	public double getRPM() {
+		return m_TalonFX.getVelocity().getValue().in(RPM);
+	}
+
+	public double getRPMperVolt() {
+		return ShooterConstants.kV;
+	}
 }

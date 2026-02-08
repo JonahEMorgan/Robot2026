@@ -19,7 +19,6 @@ import frc.robot.Constants.Subsystems.TurretConstants;
  * adjust the direction fuel will exit the shooter.
  */
 public class Turret extends SubsystemBase {
-	private final static double kGearRatio = 1;
 	/**
 	 * The yaw motor allows the mechanism to pivot left and right.
 	 */
@@ -52,8 +51,8 @@ public class Turret extends SubsystemBase {
 		m_motor = new SparkMax(2, MotorType.kBrushless);
 		SparkMaxConfig config = new SparkMaxConfig();
 		config.idleMode(IdleMode.kCoast);
-		config.absoluteEncoder.positionConversionFactor(360 / kGearRatio);
-		config.closedLoop.pid(0.01, 0, 0);
+		config.absoluteEncoder.positionConversionFactor(360 / TurretConstants.kGearRatio);
+		config.closedLoop.pid(TurretConstants.kP, 0, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
@@ -70,7 +69,7 @@ public class Turret extends SubsystemBase {
 
 	public void runMotorAtDutyCycle(double dutyCycle) {
 		double sign = Math.signum(dutyCycle);
-		dutyCycle = Math.min(TurretConstants.maxDutyCycle, Math.abs(dutyCycle));
+		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
 
 		m_motor.set(dutyCycle * sign);
 	}

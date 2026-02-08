@@ -7,16 +7,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedP;
+import frc.robot.Constants.Subsystems.TurretConstants;
 import frc.robot.subsystems.Turret;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class RunTurretToAngle extends Command {
 	private final Turret m_turretSubsystem;
 	private final double m_angle;
-	private final static double kMinPower = 0.025;
-	private final static double kMaxPower = 0.25;
-	private final static double kMaxErr = 25;
-	private final static double kTolerance = 1;
 
 	/** Creates a new RunTurretAtSpeed. */
 	public RunTurretToAngle(Turret turretSubsystem, double angle) {
@@ -30,7 +27,9 @@ public class RunTurretToAngle extends Command {
 	public void execute() {
 		SmartDashboard.putNumber("Position", m_turretSubsystem.getPosition());
 		double error = m_turretSubsystem.getPosition() - m_angle;
-		double power = ClampedP.clampedP(error, kMinPower, kMaxPower, kMaxErr, kTolerance);
+		double power = ClampedP.clampedP(
+				error, TurretConstants.kMinPower, TurretConstants.kMaxPower, TurretConstants.kMaxErr,
+				TurretConstants.kTolerance);
 		SmartDashboard.putNumber("Power", power);
 		m_turretSubsystem.runMotorAtDutyCycle(power);
 	}
@@ -44,6 +43,6 @@ public class RunTurretToAngle extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return Math.abs(m_turretSubsystem.getPosition() - m_angle) < kTolerance;
+		return Math.abs(m_turretSubsystem.getPosition() - m_angle) < TurretConstants.kTolerance;
 	}
 }
