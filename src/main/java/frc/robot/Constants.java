@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+//import frc.robot.Compliance.FixMe;
 
 public class Constants {
 	public static final class Subsystems {
@@ -16,6 +17,7 @@ public class Constants {
 			public final static double kMaxErr = 25;
 			public final static double kTolerance = 1;
 			public final static double kP = 0.01;
+			public final static double kDeadzone = 0.5; // For the X/Y joystick control
 		}
 
 		public static final class ShooterConstants {

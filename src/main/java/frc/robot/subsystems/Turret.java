@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsystems.TurretConstants;
+import frc.robot.commands.TurretCommand;
 
 /**
  * A subsystem which has the ability to change both yaw and pitch in order to
@@ -54,6 +55,8 @@ public class Turret extends SubsystemBase {
 		config.absoluteEncoder.positionConversionFactor(360 / TurretConstants.kGearRatio);
 		config.closedLoop.pid(TurretConstants.kP, 0, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+		config.closedLoop.positionWrappingEnabled(true);
+		config.closedLoop.positionWrappingInputRange(0, 360);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
 		m_controller = m_motor.getClosedLoopController();
@@ -72,5 +75,13 @@ public class Turret extends SubsystemBase {
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
 
 		m_motor.set(dutyCycle * sign);
+	}
+
+	public void stop() {
+		m_motor.stopMotor();
+	}
+
+	public TurretCommand getCommand() {
+		return new TurretCommand(this);
 	}
 }
