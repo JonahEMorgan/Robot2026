@@ -5,34 +5,63 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+//import frc.robot.Compliance.FixMe;
 
 public class Constants {
+	public static final boolean kLogging = true;
+
 	public static final class Subsystems {
 		public static final class TurretConstants {
 			public static final double kMaxDutyCycle = 0.5;
-			public final static double kGearRatio = 1;
-			public final static double kMinPower = 0.025;
-			public final static double kMaxPower = 0.25;
-			public final static double kMaxErr = 25;
-			public final static double kTolerance = 1;
-			public final static double kP = 0.01;
+			public static final double kGearRatio = 1;
+			public static final double kMinPower = 0.025;
+			public static final double kMaxPower = 0.25;
+			public static final double kMaxErr = 25;
+			public static final double kTolerance = 1;
+			public static final double kP = 0.01;
+			public static final double kLargeDeadzone = 0.5; // For the X/Y joystick control
+			public static final double kSmallDeadzone = 0.05;
+		}
+
+		public static final class HoodConstants {
+			public static final double kMaxDutyCycle = 0.5;
+			public static final double kGearRatio = 1;
+			public static final double kMinPower = 0.025;
+			public static final double kMaxPower = 0.25;
+			public static final double kMaxErr = 25;
+			public static final double kTolerance = 1;
+			public static final double kP = 0.01;
+			public static final double kDeadzone = 0.05;
 		}
 
 		public static final class ShooterConstants {
-			public static final int kMotorPort = 56;
+			public static final int kMotorPort = 23;
 			public static final double kCurrentLimit = 30;
 			public static final double kV = 480;
+			public static final int kDefaultRPM = 2400; // TODO: Test and find actual default RPM
+			public static final double kRampRate = 500;
+		}
+
+		public static final class IntakeConstants {
+			public static final int kIntakeWheelsPort = 2; // TODO: Update CAN IDs, these are placeholder values
+			public static final int kIntakeArmPort = 1;
+			public static final int kWheelSmartCurrentLimit = 10;
+			public static final int kWheelSecondaryCurrentLimit = 20;
+			public static final boolean kWheelInvert = false;
+			public static final int kArmSmartCurrentLimit = 10;
+			public static final int kArmSecondaryCurrentLimit = 20;
+			public static final boolean kArmInvert = false;
+			public static final double kArmPower = 0.5;
 		}
 	}
 
 	public static final class ControllerConstants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
-		public static final double kDeadzone = 0.05;
-		public static final double kTriggerDeadzone = .05;
 	}
 
 	public static final class DriveConstants {
+		public static final double kDeadzone = 0.05;
 		// CAN IDs (updated)
 		public static final int kFrontRightDrivePort = 10;
 		public static final int kFrontRightSteerPort = 11;
