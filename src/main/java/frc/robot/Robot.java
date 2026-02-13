@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Shooter;
@@ -19,7 +19,6 @@ import frc.robot.subsystems.Turret;
 public class Robot extends TimedRobot {
 	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
 
-	private final Shooter m_shooterSubsystem = new Shooter();
 	private final CommandPS5Controller m_driverController = new CommandPS5Controller(
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
@@ -28,6 +27,7 @@ public class Robot extends TimedRobot {
 	{
 		new Drive();
 		new Turret();
+		new Shooter();
 	}
 
 	public Robot() {
@@ -45,6 +45,9 @@ public class Robot extends TimedRobot {
 						m_operatorController::getLeftY));
 		m_operatorController.L1().whileTrue(new TurretCommands.RunAtPower(-.1, 0));
 		m_operatorController.R1().whileTrue(new TurretCommands.RunAtPower(.1, 0));
+		m_operatorController.triangle().toggleOnTrue(
+				new ShooterCommands.RunAtDPadRPM(this, m_operatorController.povRight(),
+						m_operatorController.povLeft()));
 	}
 
 	@Override
@@ -78,7 +81,7 @@ public class Robot extends TimedRobot {
 								new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
 								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
 								new TurretCommands.RunToAngleHardware(225)),
-						new ShooterCommand.RunAtDynamicRPM(m_shooterSubsystem, 2400).withTimeout(40)));
+						new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
 	}
 
 	@Override
