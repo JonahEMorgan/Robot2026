@@ -10,9 +10,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
@@ -28,6 +30,7 @@ public class Robot extends TimedRobot {
 		new Drive();
 		new Turret();
 		new Shooter();
+		new Intake();
 	}
 
 	public Robot() {
@@ -48,6 +51,9 @@ public class Robot extends TimedRobot {
 		m_operatorController.triangle().toggleOnTrue(
 				new ShooterCommands.RunAtDPadRPM(this, m_operatorController.povRight(),
 						m_operatorController.povLeft()));
+		m_operatorController.square().onTrue(new IntakeCommands.Spin(.1));
+		m_operatorController.circle().onTrue(new IntakeCommands.ExtendArmCommand());
+		m_operatorController.cross().onTrue(new IntakeCommands.RetractArmCommand());
 	}
 
 	@Override
