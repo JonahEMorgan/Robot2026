@@ -10,10 +10,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.HoodCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -28,8 +30,9 @@ public class Robot extends TimedRobot {
 
 	{
 		new Drive();
-		new Turret();
 		new Shooter();
+		new Turret();
+		new Hood();
 		new Intake();
 	}
 
@@ -51,6 +54,8 @@ public class Robot extends TimedRobot {
 		m_operatorController.triangle().toggleOnTrue(
 				new ShooterCommands.RunAtDPadRPM(this, m_operatorController.povRight(),
 						m_operatorController.povLeft()));
+		m_operatorController.povDown().onTrue(new HoodCommands.RunAtPower(-.1, 0));
+		m_operatorController.povUp().onTrue(new HoodCommands.RunAtPower(.1, 0));
 		m_operatorController.square().onTrue(new IntakeCommands.Spin(.1));
 		m_operatorController.circle().onTrue(new IntakeCommands.ExtendArmCommand());
 		m_operatorController.cross().onTrue(new IntakeCommands.RetractArmCommand());
@@ -59,22 +64,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 		m_scheduler.run();
-
-		SmartDashboard.putData(m_scheduler);
-	}
-
-	@Override
-	public void disabledInit() {
-	}
-
-	@Override
-	public void disabledPeriodic() {
-
-	}
-
-	@Override
-	public void disabledExit() {
-
+		if (Constants.kLogging) {
+			SmartDashboard.putData(m_scheduler);
+		}
 	}
 
 	@Override
