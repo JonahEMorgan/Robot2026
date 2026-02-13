@@ -1,0 +1,47 @@
+name: Deploy progress tracker to GitHub Pages
+
+on:
+  push:
+    branches:
+      - "**"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:    
+  build:
+    runs-on: ubuntu-slim
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Generate progress site with uv
+        run: |
+          cd progress
+          uv run . progress.yml
+      - name: Copy output to dist folder
+        run: |
+          mkdir -p dist/${GITHUB_REF_NAME}
+          cp progress/index.html dist/index.html
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-slim
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
