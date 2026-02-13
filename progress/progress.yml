@@ -1,123 +1,179 @@
 ---
 Commands:
-  - &toggleCoastMode
-    Name: toggleCoastMode 
+  - &ToggleCoastMode
+    Name: ToggleCoastMode
     Description: Toggles between coasting and braking when the motors are idling.
     Subsystem: Drive
     Progress: 100%
     Implementation Level: Polished
 
-  - &driveCommand
-    Name: driveCommand
+  - &SetCoastMode
+    Name: SetCoastMode
+    Description: Sets the coast mode of the drive to a specified mode.
+    Subsystem: Drive
+    Progress: 100%
+    Implementation Level: Polished
+
+  - &JoystickDrive
+    Name: JoystickDrive
     Description: Drives the robot using joysticks and can either be robot relative or field relative.
     Subsystem: Drive
     Progress: 100%
     Implementation Level: Polished
 
-  - &resetHeading
-    Name: resetHeading
+  - &ResetHeading
+    Name: ResetHeading
     Description: Resets the heading of the NavX to zero.
     Subsystem: Drive
     Progress: 100%
     Implementation Level: Polished
   
-  - &resetOdometry
-    Name: resetOdometry
+  - &ResetOdometry
+    Name: ResetOdometry
     Description: Resets the odometry to a specified starting pose.
     Subsystem: Drive
     Progress: 100%
     Implementation Level: Polished
   
-  - &testCommand
-    Name: testCommand
-    Description: Tests the drive subsystem by moving in each axis.
+  - &Stop
+    Name: Stop
+    Description: Stops the drive motors.
     Subsystem: Drive
     Progress: 100%
     Implementation Level: Polished
+
+  - &NinjaStar
+    Name: NinjaStar
+    Description: Drives to a specified pose using clamped P controllers.
+    Subsystem: Drive
+    Progress: 50%
+    Implementation Level: Untested
+
+  - &SpinToAngle
+    Name: SpinToAngle
+    Description: Spins to a specific angle using clamped P controllers.
+    Subsystem: Drive
+    Progress: 50%
+    Implementation Level: Untested
+
+  - &DriveDistance
+    Name: DriveDistance
+    Description: Drives for a specific distance using clamped P controllers.
+    Subsystem: Drive
+    Progress: 50%
+    Implementation Level: Untested
   
-  - &deployRollers
-    Name: deployRollers
+  - &ExtendArmCommand
+    Name: ExtendArmCommand
     Description: Lowers the intake towards the field so that the rollers contact the fuel.
     Subsystem: Intake
-    Progress: 75%
+    Progress: 50%
     Implementation Level: Draft
   
-  - &retractRollers
-    Name: retractRollers
+  - &RetractArmCommand
+    Name: RetractArmCommand
     Description: Raises the intake into the robot to stow it away when not in use.
     Subsystem: Intake
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &intake_moveForTime
-    Name: moveForTime
-    Description: Moves the intake for a specified amount of time at a fixed speed.
-    Subsystem: Intake
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &intake_moveWithTrigger
-    Name: moveWithTrigger
-    Description: Moves the intake at a fixed speed when a button is pressed.
-    Subsystem: Intake
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &transport_moveForTime
-    Name: moveForTime
-    Description: Moves the transport for a specified amount of time at a fixed speed.
-    Subsystem: Transport
-    Progress: 100%
-    Implementation Level: Untested
-  
-  - &transport_moveWithTrigger
-    Name: moveWithTrigger
-    Description: Moves the transport at a fixed speed when a button is pressed.
-    Subsystem: Transport
-    Progress: 100%
-    Implementation Level: Untested
-  
-  - &shooter_moveForTime
-    Name: moveForTime
-    Description: Moves the shooter for a specified amount of time at a fixed speed.
-    Subsystem: Shooter
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &shooter_moveWithTrigger
-    Name: moveWithTrigger
-    Description: Moves the shooter at a fixed speed when a button is pressed.
-    Subsystem: Shooter
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &climber_moveForTime
-    Name: moveForTime
-    Description: Moves the climber for a specified amount of time at a fixed speed.
-    Subsystem: Climber
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &climber_moveWithTrigger
-    Name: moveWithTrigger
-    Description: Moves the climber at a fixed speed when a button is pressed.
-    Subsystem: Climber
-    Progress: 75%
-    Implementation Level: Draft
-  
-  - &aimWithJoystick
-    Name: aimWithJoystick
-    Description: Aims the turret by moving in the direction of the joystick.
-    Subsystem: Turret
     Progress: 50%
     Implementation Level: Draft
+  
+  - &Spin
+    Name: Spin
+    Description: Moves the intake at a fixed speed.
+    Subsystem: Intake
+    Progress: 100%
+    Implementation Level: Untested
+  
+  - &RunAtStaticRPM
+    Name: RunAtStaticRPM
+    Description: Moves the shooter at a specified speed using only feedforward.
+    Subsystem: Shooter
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &RunAtPower
+    Name: RunAtPower
+    Description: Moves the shooter for a fixed duration and power level.
+    Subsystem: Shooter
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &RunAtDynamicRPM
+    Name: RunAtDynamicRPM
+    Description: Moves the shooter at a specified speed using the built in PID controller and feedforward.
+    Subsystem: Shooter
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &RunAtDPadRPM
+    Name: RunAtDPadRPM
+    Description: Moves the shooter at a speed which can be changed by pressing buttons on the D-pad.
+    Subsystem: Shooter
+    Progress: 100%
+    Implementation Level: Polished
 
-  - &aimAtAngle
-    Name: aimAtAngle
-    Description: Aims the turret in a specific direction using the PID controllers.
+  - &turret_RunToAngleHardware
+    Name: RunToAngleHardware
+    Description: Aims the turret in a direction using the built in PID controller.
+    Subsystem: Turret
+    Progress: 100%
+    Implementation Level: Polished
+
+  - &turret_RunToAngleSoftware
+    Name: RunToAngleSoftware
+    Description: Aims the turret in a direction using a clamped P controller.
+    Subsystem: Turret
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &RunToAngleHardwareSignal
+    Name: RunToAngleHardwareSignal
+    Description: Aims the turret in a direction based on joysticks using the built in PID controller.
+    Subsystem: Turret
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &turret_RunAtPower
+    Name: RunAtPower
+    Description: Aims the turret left and right by running at a power level for a duration.
+    Subsystem: Turret
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &turret_RunAtPowerSignal
+    Name: RunAtPowerSignal
+    Description: Aims the turret left and right based on a supplier from triggers.
+    Subsystem: Turret
+    Progress: 100%
+    Implementation Level: Polished
+  
+  - &hood_RunToAngleHardware
+    Name: RunToAngleHardware
+    Description: Aims the hood at an angle using the built in PID controller.
     Subsystem: Turret
     Progress: 50%
-    Implementation Level: Draft
+    Implementation Level: Untested
+
+  - &hood_RunToAngleSoftware
+    Name: RunToAngleSoftware
+    Description: Aims the hood at an angle using a clamped P controller.
+    Subsystem: Turret
+    Progress: 50%
+    Implementation Level: Untested
+  
+  - &hood_RunAtPower
+    Name: RunAtPower
+    Description: Aims the hood up and down by running at a power level for a duration.
+    Subsystem: Turret
+    Progress: 50%
+    Implementation Level: Untested
+  
+  - &hood_RunAtPowerSignal
+    Name: RunAtPowerSignal
+    Description: Aims the hood up and down based on a supplier from triggers.
+    Subsystem: Turret
+    Progress: 50%
+    Implementation Level: Untested
   
 
 
@@ -131,13 +187,17 @@ Subsystems:
     Members:
       - Jonah Morgan
     Commands:
-      - *toggleCoastMode
-      - *driveCommand
-      - *resetHeading
-      - *resetOdometry
-      - *testCommand
+      - *ToggleCoastMode
+      - *SetCoastMode
+      - *JoystickDrive
+      - *ResetHeading
+      - *ResetOdometry
+      - *Stop
+      - *NinjaStar
+      - *SpinToAngle
+      - *DriveDistance
     Algorithms:
-      - Robot heading: PID controller
+      - Robot heading: Clamped P controller
     Sensors:
       - Front right encoder: CAN id 12
       - Back right encoder: CAN id 22
@@ -161,95 +221,112 @@ Subsystems:
 
   - Name: Intake
     Description: The intake subsystem collects fuel from the field and indexes it into the transport.
-    Progress: 75%
+    Progress: 50%
     Implementation Level: Draft
     Owners:
       - Jonathan Li
     Members:
       - Nitya Bajaj
     Commands:
-      - *deployRollers
-      - *retractRollers
-      - *intake_moveForTime
-      - *intake_moveWithTrigger
+      - *ExtendArmCommand
+      - *RetractArmCommand
+      - *Spin
     Motors:
       - Deploy motor: CAN id TBD
       - Roller motor: CAN id TBD
     Button Bindings:
-      - R1: Spin rollers inward
-      - L1: Spin rollers outward
-      - Circle: Deploy & retract rollers
+      - Square: Spin rollers
+      - Circle: Extend arm
+      - Cross: Retract arm
     
   - Name: Transport
     Description: The transport subsystem stores fuel and allows it to move from the intake to the shooter.
-    Progress: 100%
-    Implementation Level: Untested
+    Progress: 0%
+    Implementation Level: Draft
     Owners:
       - Vincent Christiansen
-    Commands:
-      - *transport_moveForTime
-      - *transport_moveWithTrigger
     Motors:
       - Intake motor: CAN id TBD
-    Button Bindings:
-      - Triangle: Move fuel into shooter
-      - Cross: Move fuel out of shooter
   
   - Name: Shooter
     Description: The shooter subsystem uses a flywheel to launch fuel from the robot.
-    Progress: 75%
-    Implementation Level: Draft
+    Progress: 100%
+    Implementation Level: Polished
     Owners:
       - Arham Ahsan
       - Austen Mowry
     Members:
       - Nabhan Sadeed
     Commands:
-      - *shooter_moveForTime
-      - *shooter_moveWithTrigger
+      - *RunAtStaticRPM
+      - *RunAtPower
+      - *RunAtDynamicRPM
+      - *RunAtDPadRPM
     Motors:
       - Shooter motor: CAN id TBD
     Button Bindings:
-      - Square: Spin shooter
+      - Triangle: Toggle shooter spinning
+      - D-pad Left: Decrease shooter speed
+      - D-pad Right: Increase shooter speed
 
   - Name: Climber
     Description: The climber subsystem moves up and down to attach to the tower.
-    Progress: 75%
+    Progress: 0%
     Implementation Level: Draft
     Owners:
       - Nitya Bajaj
     Members:
       - Arham Ahsan
-    Commands:
-      - *climber_moveForTime
-      - *climber_moveWithTrigger
     Motors:
       - Climber motor: CAN id TBD
-    Button Bindings:
-      - D-pad Up: Climber up
-      - D-pad Down: Climber down
 
   - Name: Turret
-    Description: The turret subsystem aims the shooter in order to land fuel in the hub.
-    Progress: 50%
-    Implementation Level: Draft
+    Description: The turret subsystem aims the shooter left and right in order to land fuel in the hub.
+    Progress: 100%
+    Implementation Level: Polished
     Owners:
       - Yeli Bello
     Members:
       - Nabhan Sadeed
       - Alex Ostrovskiy
     Commands:
-      - *aimWithJoystick
-      - *aimAtAngle
+      - *turret_RunToAngleHardware
+      - *RunToAngleHardwareSignal
+      - *turret_RunToAngleSoftware
+      - *turret_RunAtPower
+      - *turret_RunAtPowerSignal
     Algorithms:
-      - Turret yaw: PID controller
-      - Turret pitch: PID controller
+      - Turret angle: Built in PID controller
     Sensors:
-      - Turret yaw encoder: Alternate encoder port
-      - Turret pitch encoder: Alternate encoder port
+      - Turret angle encoder: Alternate encoder port
     Motors:
-      - Yaw motor: CAN id TBD
-      - Pitch motor: CAN id TBD
+      - Turret motor: CAN id TBD
     Button Bindings:
-      - Right Stick All: Aim turret
+      - Left Stick All: Aim turret in direction
+      - L1: Aim turret left
+      - R1: Aim turret right
+  
+  - Name: Hood
+    Description: The hood subsystem aims the shooter up and down in order to land fuel in the hub.
+    Progress: 50%
+    Implementation Level: Untested
+    Owners:
+      - Yeli Bello
+    Members:
+      - Nabhan Sadeed
+      - Alex Ostrovskiy
+    Commands:
+      - *hood_RunToAngleHardware
+      - *hood_RunToAngleSoftware
+      - *hood_RunAtPower
+      - *hood_RunAtPowerSignal
+    Algorithms:
+      - Hood angle: Built in PID controller
+    Sensors:
+      - Hood angle encoder: Alternate encoder port
+    Motors:
+      - Hood motor: CAN id TBD
+    Button Bindings:
+      - D-pad Up: Aim hood up
+      - D-pad Down: Aim hood down
 ...
