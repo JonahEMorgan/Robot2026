@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.RunTurretToAngleHardware;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -20,7 +20,6 @@ public class Robot extends TimedRobot {
 	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
 
 	private final Shooter m_shooterSubsystem = new Shooter();
-	private final Turret m_turretSubsystem = new Turret();
 	private final CommandPS5Controller m_driverController = new CommandPS5Controller(
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
@@ -28,6 +27,7 @@ public class Robot extends TimedRobot {
 
 	{
 		new Drive();
+		new Turret();
 	}
 
 	public Robot() {
@@ -40,6 +40,11 @@ public class Robot extends TimedRobot {
 						() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
 						() -> m_driverController.getL2Axis() - m_driverController.getR2Axis(),
 						m_driverController.getHID()::getCreateButton));
+		Turret.getTurret().setDefaultCommand(
+				new TurretCommands.RunToAngleHardwareSignal(m_operatorController::getLeftX,
+						m_operatorController::getLeftY));
+		m_operatorController.L1().whileTrue(new TurretCommands.RunAtPower(-.1, 0));
+		m_operatorController.R1().whileTrue(new TurretCommands.RunAtPower(.1, 0));
 	}
 
 	@Override
@@ -69,13 +74,10 @@ public class Robot extends TimedRobot {
 		m_scheduler.schedule(
 				Commands.parallel(
 						Commands.sequence(
-								new RunTurretToAngleHardware(m_turretSubsystem, 45),
-								Commands.waitSeconds(1),
-								new RunTurretToAngleHardware(m_turretSubsystem, 225),
-								Commands.waitSeconds(1),
-								new RunTurretToAngleHardware(m_turretSubsystem, 45),
-								Commands.waitSeconds(1),
-								new RunTurretToAngleHardware(m_turretSubsystem, 225)),
+								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(225)),
 						new ShooterCommand.RunAtDynamicRPM(m_shooterSubsystem, 2400).withTimeout(40)));
 	}
 
