@@ -25,20 +25,20 @@ public class TurretCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void initialize() {
-			Turret.setAngle(m_angle);
+			Turret.getTurret().setAngle(m_angle);
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Turret.stop();
+			Turret.getTurret().stop();
 		}
 
 		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
 			// return false;
-			return Math.abs(Turret.getPosition() - m_angle) < TurretConstants.kTolerance;
+			return Math.abs(Turret.getTurret().getPosition() - m_angle) < TurretConstants.kTolerance;
 		}
 	}
 
@@ -64,14 +64,14 @@ public class TurretCommands {
 			double y = m_y.getAsDouble();
 			if (Math.hypot(x, y) > TurretConstants.kLargeDeadzone) {
 				double angle = Units.radiansToDegrees(Math.atan2(y, x)) + 180;
-				Turret.setAngle(angle);
+				Turret.getTurret().setAngle(angle);
 			}
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Turret.stop();
+			Turret.getTurret().stop();
 		}
 
 		// Returns true when the command should end.
@@ -93,23 +93,23 @@ public class TurretCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void execute() {
-			double error = Turret.getPosition() - m_angle;
+			double error = Turret.getTurret().getPosition() - m_angle;
 			double power = ClampedP.clampedP(
 					error, TurretConstants.kMinPower, TurretConstants.kMaxPower, TurretConstants.kMaxErr,
 					TurretConstants.kTolerance);
-			Turret.runAtDutyCycle(power);
+			Turret.getTurret().runAtDutyCycle(power);
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Turret.stop();
+			Turret.getTurret().stop();
 		}
 
 		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
-			return Math.abs(Turret.getPosition() - m_angle) < TurretConstants.kTolerance;
+			return Math.abs(Turret.getTurret().getPosition() - m_angle) < TurretConstants.kTolerance;
 		}
 	}
 
@@ -131,14 +131,14 @@ public class TurretCommands {
 		public void initialize() {
 			m_timer.reset();
 			m_timer.start();
-			Turret.runAtDutyCycle(m_speed);
+			Turret.getTurret().runAtDutyCycle(m_speed);
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
 			m_timer.stop();
-			Turret.stop();
+			Turret.getTurret().stop();
 		}
 
 		// Returns true when the command should end.
@@ -160,13 +160,14 @@ public class TurretCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void execute() {
-			Turret.runAtDutyCycle(MathUtil.applyDeadband(m_speed.getAsDouble(), TurretConstants.kSmallDeadzone));
+			Turret.getTurret()
+					.runAtDutyCycle(MathUtil.applyDeadband(m_speed.getAsDouble(), TurretConstants.kSmallDeadzone));
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Turret.stop();
+			Turret.getTurret().stop();
 		}
 
 		// Returns true when the command should end.
