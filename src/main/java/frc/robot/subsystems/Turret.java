@@ -28,11 +28,15 @@ public class Turret extends SubsystemBase {
 		m_motor = new SparkMax(2, MotorType.kBrushless);
 		SparkMaxConfig config = new SparkMaxConfig();
 		config.idleMode(IdleMode.kBrake);
-		config.absoluteEncoder.positionConversionFactor(360 / TurretConstants.kGearRatio);
-		config.closedLoop.pid(TurretConstants.kP, 0, 0);
+		config.absoluteEncoder.positionConversionFactor(360);
+		config.closedLoop.pid(TurretConstants.kP, TurretConstants.kI, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-		config.closedLoop.positionWrappingEnabled(true);
+		config.closedLoop.positionWrappingEnabled(false);
+		config.inverted(true);
+		// config.closedLoop.
 		config.closedLoop.positionWrappingInputRange(0, 360);
+		config.smartCurrentLimit(20);
+		config.secondaryCurrentLimit(25);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
 		m_controller = m_motor.getClosedLoopController();
@@ -57,9 +61,13 @@ public class Turret extends SubsystemBase {
 	}
 
 	public static void runAtDutyCycle(double dutyCycle) {
+		if (dutyCycle > 0) {
+			dutyCycle *= Math.min((220 - Turret.getPosition()) / 25, 1);
+		} else {
+			dutyCycle *= Math.min(Turret.getPosition() / 25, 1);
+		}
 		double sign = Math.signum(dutyCycle);
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
-
 		s_theTurret.m_motor.set(dutyCycle * sign);
 	}
 
