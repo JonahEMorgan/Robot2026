@@ -7,12 +7,16 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Subsystems.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
+	private static Shooter s_theShooter;
 
-	private final TalonFX m_TalonFX = new TalonFX(ShooterConstants.kMotorPort);
+	private final TalonFX m_motor = new TalonFX(ShooterConstants.kMotorPort);
+	private final VelocityVoltage m_request = new VelocityVoltage(0);
 
 	public Shooter() {
 		TalonFXConfiguration config = new TalonFXConfiguration();
@@ -23,30 +27,50 @@ public class Shooter extends SubsystemBase {
 		config.Slot0.kI = 0;
 		config.Slot0.kD = 0;
 
-		m_TalonFX.getConfigurator().apply(config);
+		m_motor.getConfigurator().apply(config);
+		if (s_theShooter == null) {
+			s_theShooter = this;
+		} else {
+			throw new Error("Shooter already instantiated");
+		}
 	}
 
-	public void velocityVoltage(VelocityVoltage request) {
-		m_TalonFX.setControl(request);
+	public static Shooter getShooter() {
+		return s_theShooter;
 	}
 
-	public void stop() {
-		m_TalonFX.set(0);
+	/**
+	 * Sets setpoint to 0 and stops the motor.
+	 */
+	public static void stop() {
+		s_theShooter.m_motor.stopMotor();
 	}
 
-	public void setPower(double power) {
-		m_TalonFX.set(power);
+	public static void setPower(double power) {
+		s_theShooter.m_motor.set(power);
 	}
 
-	public void setVoltage(double voltage) {
-		m_TalonFX.setVoltage(voltage);
+	public static void setVoltage(double voltage) {
+		s_theShooter.m_motor.setVoltage(voltage);
 	}
 
-	public double getRPM() {
-		return m_TalonFX.getVelocity().getValue().in(RPM);
+	public static void setRPM(double rpm) {
+		double voltage = rpm / getRPMperVolt();
+		s_theShooter.m_motor.setControl(s_theShooter.m_request.withVelocity(RPM.of(rpm)).withFeedForward(voltage));
 	}
 
-	public double getRPMperVolt() {
+	public static double getRPM() {
+		return s_theShooter.m_motor.getVelocity().getValue().in(RPM);
+	}
+
+	public static double getRPMperVolt() {
 		return ShooterConstants.kV;
+	}
+
+	@Override
+	public void periodic() {
+		if (Constants.kLogging) {
+			SmartDashboard.putNumber("Shooter/RPM", getRPM());
+		}
 	}
 }

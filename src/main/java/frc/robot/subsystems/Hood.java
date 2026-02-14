@@ -16,61 +16,59 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Subsystems.TurretConstants;
 
-public class Turret extends SubsystemBase {
-	private static Turret s_theTurret;
+public class Hood extends SubsystemBase {
+	private static Hood s_theHood;
 	private final SparkMax m_motor;
 
 	private final SparkAbsoluteEncoder m_encoder;
 
 	private final SparkClosedLoopController m_controller;
 
-	public Turret() {
+	public Hood() {
 		m_motor = new SparkMax(2, MotorType.kBrushless);
 		SparkMaxConfig config = new SparkMaxConfig();
 		config.idleMode(IdleMode.kBrake);
 		config.absoluteEncoder.positionConversionFactor(360 / TurretConstants.kGearRatio);
 		config.closedLoop.pid(TurretConstants.kP, 0, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-		config.closedLoop.positionWrappingEnabled(true);
-		config.closedLoop.positionWrappingInputRange(0, 360);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
 		m_controller = m_motor.getClosedLoopController();
 
-		if (s_theTurret == null) {
-			s_theTurret = this;
+		if (s_theHood == null) {
+			s_theHood = this;
 		} else {
-			throw new Error("Turret already instantiated");
+			throw new Error("Hood already instantiated");
 		}
 	}
 
-	public static Turret getTurret() {
-		return s_theTurret;
+	public static Hood getHood() {
+		return s_theHood;
 	}
 
 	public static void setAngle(double angle) {
-		s_theTurret.m_controller.setSetpoint(angle, ControlType.kPosition);
+		s_theHood.m_controller.setSetpoint(angle, ControlType.kPosition);
 	}
 
 	public static double getPosition() {
-		return s_theTurret.m_encoder.getPosition();
+		return s_theHood.m_encoder.getPosition();
 	}
 
 	public static void runAtDutyCycle(double dutyCycle) {
 		double sign = Math.signum(dutyCycle);
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
 
-		s_theTurret.m_motor.set(dutyCycle * sign);
+		s_theHood.m_motor.set(dutyCycle * sign);
 	}
 
 	public static void stop() {
-		s_theTurret.m_motor.stopMotor();
+		s_theHood.m_motor.stopMotor();
 	}
 
 	@Override
 	public void periodic() {
 		if (Constants.kLogging) {
-			SmartDashboard.putNumber("Turret/Position", getPosition());
+			SmartDashboard.putNumber("Hood/Position", getPosition());
 		}
 	}
 }
