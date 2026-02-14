@@ -18,6 +18,7 @@ import frc.robot.Constants.Subsystems.TurretConstants;
 
 public class Turret extends SubsystemBase {
 	private static Turret s_theTurret;
+	private double m_dutyCycle;
 	private final SparkMax m_motor;
 
 	private final SparkAbsoluteEncoder m_encoder;
@@ -28,11 +29,14 @@ public class Turret extends SubsystemBase {
 		m_motor = new SparkMax(2, MotorType.kBrushless);
 		SparkMaxConfig config = new SparkMaxConfig();
 		config.idleMode(IdleMode.kBrake);
-		config.absoluteEncoder.positionConversionFactor(360 / TurretConstants.kGearRatio);
-		config.closedLoop.pid(TurretConstants.kP, 0, 0);
+		config.absoluteEncoder.positionConversionFactor(360);
+		config.closedLoop.pid(TurretConstants.kP, TurretConstants.kI, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-		config.closedLoop.positionWrappingEnabled(true);
+		config.closedLoop.positionWrappingEnabled(false);
 		config.closedLoop.positionWrappingInputRange(0, 360);
+		config.smartCurrentLimit(TurretConstants.kSmartCurrent);
+		config.secondaryCurrentLimit(TurretConstants.kCurrent);
+		config.inverted(true);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
 		m_controller = m_motor.getClosedLoopController();
@@ -49,6 +53,7 @@ public class Turret extends SubsystemBase {
 	}
 
 	public static void setAngle(double angle) {
+		s_theTurret.m_dutyCycle = 0;
 		s_theTurret.m_controller.setSetpoint(angle, ControlType.kPosition);
 	}
 
@@ -59,7 +64,7 @@ public class Turret extends SubsystemBase {
 	public static void runAtDutyCycle(double dutyCycle) {
 		double sign = Math.signum(dutyCycle);
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
-
+		s_theTurret.m_dutyCycle = dutyCycle;
 		s_theTurret.m_motor.set(dutyCycle * sign);
 	}
 
@@ -69,6 +74,11 @@ public class Turret extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+		if ((m_dutyCycle > 0 && Turret.getPosition() > TurretConstants.kMaxAngle)
+				|| (m_dutyCycle < 0 && Turret.getPosition() < TurretConstants.kMinAngle)) {
+			stop(); // Ensure that you cannot overshoot even more after overshooting has already
+					// ocurred.
+		}
 		if (Constants.kLogging) {
 			SmartDashboard.putNumber("Turret/Position", getPosition());
 		}
