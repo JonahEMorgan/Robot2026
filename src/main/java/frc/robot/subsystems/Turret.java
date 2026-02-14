@@ -18,6 +18,7 @@ import frc.robot.Constants.Subsystems.TurretConstants;
 
 public class Turret extends SubsystemBase {
 	private static Turret s_theTurret;
+	private double m_dutyCycle;
 	private final SparkMax m_motor;
 
 	private final SparkAbsoluteEncoder m_encoder;
@@ -52,6 +53,7 @@ public class Turret extends SubsystemBase {
 	}
 
 	public static void setAngle(double angle) {
+		s_theTurret.m_dutyCycle = 0;
 		s_theTurret.m_controller.setSetpoint(angle, ControlType.kPosition);
 	}
 
@@ -60,12 +62,9 @@ public class Turret extends SubsystemBase {
 	}
 
 	public static void runAtDutyCycle(double dutyCycle) {
-		if ((dutyCycle > 0 && Turret.getPosition() > 270) || (dutyCycle < 0 && Turret.getPosition() < 50)) {
-			dutyCycle = 0; // Ensure that you cannot overshoot even more after overshooting has already
-							// ocurred.
-		}
 		double sign = Math.signum(dutyCycle);
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));
+		s_theTurret.m_dutyCycle = dutyCycle;
 		s_theTurret.m_motor.set(dutyCycle * sign);
 	}
 
@@ -75,6 +74,11 @@ public class Turret extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+		if ((m_dutyCycle > 0 && Turret.getPosition() > TurretConstants.kMaxAngle)
+				|| (m_dutyCycle < 0 && Turret.getPosition() < TurretConstants.kMinAngle)) {
+			stop(); // Ensure that you cannot overshoot even more after overshooting has already
+					// ocurred.
+		}
 		if (Constants.kLogging) {
 			SmartDashboard.putNumber("Turret/Position", getPosition());
 		}
