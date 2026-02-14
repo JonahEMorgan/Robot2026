@@ -32,11 +32,10 @@ public class Turret extends SubsystemBase {
 		config.closedLoop.pid(TurretConstants.kP, TurretConstants.kI, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 		config.closedLoop.positionWrappingEnabled(false);
-		config.inverted(true);
-		// config.closedLoop.
 		config.closedLoop.positionWrappingInputRange(0, 360);
-		config.smartCurrentLimit(20);
-		config.secondaryCurrentLimit(25);
+		config.smartCurrentLimit(TurretConstants.kSmartCurrent);
+		config.secondaryCurrentLimit(TurretConstants.kCurrent);
+		config.inverted(true);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
 		m_controller = m_motor.getClosedLoopController();
@@ -61,10 +60,9 @@ public class Turret extends SubsystemBase {
 	}
 
 	public static void runAtDutyCycle(double dutyCycle) {
-		if (dutyCycle > 0) {
-			dutyCycle *= Math.min((220 - Turret.getPosition()) / 25, 1);
-		} else {
-			dutyCycle *= Math.min(Turret.getPosition() / 25, 1);
+		if ((dutyCycle > 0 && Turret.getPosition() > 270) || (dutyCycle < 0 && Turret.getPosition() < 50)) {
+			dutyCycle = 0; // Ensure that you cannot overshoot even more after overshooting has already
+							// ocurred.
 		}
 		double sign = Math.signum(dutyCycle);
 		dutyCycle = Math.min(TurretConstants.kMaxDutyCycle, Math.abs(dutyCycle));

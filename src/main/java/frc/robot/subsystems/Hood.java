@@ -31,6 +31,10 @@ public class Hood extends SubsystemBase {
 		config.absoluteEncoder.positionConversionFactor(360);
 		config.closedLoop.pid(HoodConstants.kP, 0, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+		config.closedLoop.positionWrappingEnabled(false);
+		config.closedLoop.positionWrappingInputRange(0, 360);
+		config.smartCurrentLimit(HoodConstants.kSmartCurrent);
+		config.secondaryCurrentLimit(HoodConstants.kCurrent);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
 		m_controller = m_motor.getClosedLoopController();
