@@ -12,6 +12,7 @@ public class Constants {
 
 	public static final class Subsystems {
 		public static final class TurretConstants {
+			public static final int kMotor = 2;
 			public static final double kMaxDutyCycle = 0.5;
 			public static final double kMinPower = 0.025;
 			public static final double kMaxPower = 0.25;
@@ -28,15 +29,19 @@ public class Constants {
 		}
 
 		public static final class HoodConstants {
+			public static final int kMotor = 3;
 			public static final double kMaxDutyCycle = 0.5;
 			public static final double kMinPower = 0.025;
 			public static final double kMaxPower = 0.25;
 			public static final double kMaxErr = 25;
 			public static final double kTolerance = 1;
 			public static final double kP = 0.01;
+			public static final double kI = 0.0000;
 			public static final double kDeadzone = 0.05;
 			public static final int kSmartCurrent = 20;
 			public static final int kCurrent = 25;
+			public static final double kMinAngle = 50;
+			public static final double kMaxAngle = 100;
 		}
 
 		public static final class ShooterConstants {

@@ -31,9 +31,9 @@ public class Robot extends TimedRobot {
 	{
 		new Drive();
 		new Shooter();
-		new Turret();
-		new Hood();
 		new Intake();
+		Turret.create();
+		Hood.create();
 	}
 
 	public Robot() {
