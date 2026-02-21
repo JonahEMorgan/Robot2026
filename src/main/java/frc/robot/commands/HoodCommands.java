@@ -24,19 +24,19 @@ public class HoodCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void initialize() {
-			Hood.setAngle(m_angle);
+			Hood.getHood().setAngle(m_angle);
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Hood.stop();
+			Hood.getHood().stop();
 		}
 
 		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
-			return Math.abs(Hood.getPosition() - m_angle) < HoodConstants.kTolerance;
+			return Math.abs(Hood.getHood().getPosition() - m_angle) < HoodConstants.kTolerance;
 		}
 	}
 
@@ -52,23 +52,24 @@ public class HoodCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void execute() {
-			double error = Hood.getPosition() - m_angle;
+			double error = Hood.getHood().getPosition() - m_angle;
 			double power = ClampedP.clampedP(
 					error, HoodConstants.kMinPower, HoodConstants.kMaxPower, HoodConstants.kMaxErr,
 					HoodConstants.kTolerance);
-			Hood.runAtDutyCycle(power);
+			Hood.getHood().runAtDutyCycle(power);
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Hood.stop();
+			Hood.getHood().stop();
 		}
 
 		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
-			return Math.abs(Hood.getPosition() - m_angle) < HoodConstants.kTolerance;
+			// return false;
+			return Math.abs(Hood.getHood().getPosition() - m_angle) < HoodConstants.kTolerance;
 		}
 	}
 
@@ -90,14 +91,14 @@ public class HoodCommands {
 		public void initialize() {
 			m_timer.reset();
 			m_timer.start();
-			Hood.runAtDutyCycle(m_speed);
+			Hood.getHood().runAtDutyCycle(m_speed);
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
 			m_timer.stop();
-			Hood.stop();
+			Hood.getHood().stop();
 		}
 
 		// Returns true when the command should end.
@@ -119,13 +120,13 @@ public class HoodCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void execute() {
-			Hood.runAtDutyCycle(MathUtil.applyDeadband(m_speed.getAsDouble(), HoodConstants.kDeadzone));
+			Hood.getHood().runAtDutyCycle(MathUtil.applyDeadband(m_speed.getAsDouble(), HoodConstants.kDeadzone));
 		}
 
 		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
-			Hood.stop();
+			Hood.getHood().stop();
 		}
 
 		// Returns true when the command should end.
