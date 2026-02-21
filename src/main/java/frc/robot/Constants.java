@@ -58,6 +58,11 @@ public class Constants {
 			public static final boolean kArmInvert = false;
 			public static final double kArmPower = 0.5;
 		}
+
+		public static final class TransportConstants {
+			public static final int kMotorPort = 21;
+			public static final int kCurrentLimit = 15;
+		}
 	}
 
 	public static final class ControllerConstants {
