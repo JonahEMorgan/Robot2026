@@ -69,6 +69,11 @@ public class Constants {
 			public static final double kArmRetractRotations = 0;
 			public static final double kArmDeployRotations = 3;
 		}
+
+		public static final class TransportConstants {
+			public static final int kMotorPort = 21;
+			public static final int kCurrentLimit = 15;
+		}
 	}
 
 	public static final class ControllerConstants {
