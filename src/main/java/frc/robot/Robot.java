@@ -56,9 +56,11 @@ public class Robot extends TimedRobot {
 						m_operatorController.povLeft()));
 		m_operatorController.povDown().onTrue(new HoodCommands.RunAtPower(-.1, 0));
 		m_operatorController.povUp().onTrue(new HoodCommands.RunAtPower(.1, 0));
-		m_operatorController.square().onTrue(new IntakeCommands.Spin(.1));
-		m_operatorController.circle().onTrue(new IntakeCommands.ExtendArmCommand());
-		m_operatorController.cross().onTrue(new IntakeCommands.RetractArmCommand());
+		m_operatorController.L2().whileTrue(new IntakeCommands.SpinArmPower(0.1));
+		m_operatorController.R2().whileTrue(new IntakeCommands.SpinArmPower(-0.1));
+		m_operatorController.square().onTrue(new IntakeCommands.SpinIntake(.1));
+		m_operatorController.circle().onTrue(Intake.getExtendCommand());
+		m_operatorController.cross().onTrue(Intake.getRetractCommand());
 	}
 
 	@Override
@@ -72,14 +74,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_scheduler.cancelAll();
-		m_scheduler.schedule(
-				Commands.parallel(
-						Commands.sequence(
-								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
-								new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
-								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
-								new TurretCommands.RunToAngleHardware(225)),
-						new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
+		m_scheduler.schedule(Intake.getResetCommand());
 	}
 
 	@Override
