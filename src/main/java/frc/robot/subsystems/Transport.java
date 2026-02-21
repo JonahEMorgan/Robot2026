@@ -13,7 +13,7 @@ import frc.robot.Constants.Subsystems.TransportConstants;
  */
 public class Transport extends SubsystemBase {
 	private static Transport s_theTransport;
-	private final SparkMax motor;
+	private final SparkMax m_motor;
 
 	/**
 	 * Constructs a new Transport subsystem.
@@ -21,7 +21,7 @@ public class Transport extends SubsystemBase {
 	 * subsystem exists.
 	 */
 	public Transport() {
-		motor = new SparkMax(TransportConstants.kMotorPort, MotorType.kBrushless);
+		m_motor = new SparkMax(TransportConstants.kMotorPort, MotorType.kBrushless);
 		SparkMaxConfig config = new SparkMaxConfig();
 		config.smartCurrentLimit(TransportConstants.kCurrentLimit);
 		if (s_theTransport == null) {
@@ -46,13 +46,13 @@ public class Transport extends SubsystemBase {
 	 * @param speed The speed to set, between -1.0 and 1.0.
 	 */
 	public static void setPower(double speed) {
-		s_theTransport.motor.set(speed);
+		s_theTransport.m_motor.set(speed);
 	}
 
 	/**
 	 * Stops the transport motor by setting its speed to zero.
 	 */
 	public static void stop() {
-		s_theTransport.motor.set(0);
+		s_theTransport.m_motor.set(0);
 	}
 }
