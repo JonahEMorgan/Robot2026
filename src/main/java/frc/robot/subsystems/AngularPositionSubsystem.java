@@ -30,8 +30,11 @@ public class AngularPositionSubsystem extends SubsystemBase {
 	private final SparkAbsoluteEncoder m_encoder;
 	private final SparkClosedLoopController m_controller;
 
-	public AngularPositionSubsystem(int id, double kP, double kI, boolean wrapping, int current, int smartCurrent,
-			String name, double minAngle, double maxAngle, double maxDutyCycle, boolean inverted) {
+	public AngularPositionSubsystem(int id, String name,
+			double kP, double kI,
+			int currentLimit, int smartCurrentLimit,
+			double minAngle, double maxAngle,
+			double maxDutyCycle, boolean inverted) {
 		m_name = name;
 		m_minAngle = minAngle;
 		m_maxAngle = maxAngle;
@@ -43,9 +46,8 @@ public class AngularPositionSubsystem extends SubsystemBase {
 		config.closedLoop.pid(kP, kI, 0);
 		config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 		config.closedLoop.positionWrappingEnabled(false);
-		config.closedLoop.positionWrappingInputRange(0, 360);
-		config.smartCurrentLimit(smartCurrent);
-		config.secondaryCurrentLimit(current);
+		config.smartCurrentLimit(smartCurrentLimit);
+		config.secondaryCurrentLimit(currentLimit);
 		config.inverted(inverted);
 		m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		m_encoder = m_motor.getAbsoluteEncoder();
@@ -53,31 +55,60 @@ public class AngularPositionSubsystem extends SubsystemBase {
 	}
 
 	public void setAngle(double angle) {
+		if (angle < m_minAngle || angle > m_maxAngle) {
+			return;
+		}
 		m_dutyCycle = 0;
 		m_controller.setSetpoint(angle, ControlType.kPosition);
 	}
 
 	public double getPosition() {
-		return m_encoder.getPosition();
+		double position = m_encoder.getPosition();
+		/*
+		 * if (position < m_minAngle || position > m_disallowedMidpoint) {
+		 * return m_minAngle;
+		 * } else if (position > m_maxAngle && position < m_disallowedMidpoint) {
+		 * return m_maxAngle;
+		 * }
+		 */
+		return position;
 	}
 
 	public void runAtDutyCycle(double dutyCycle) {
 		double sign = Math.signum(dutyCycle);
 		dutyCycle = Math.min(m_maxDutyCycle, Math.abs(dutyCycle));
 		m_dutyCycle = dutyCycle * sign;
-		m_motor.set(dutyCycle * sign);
+		m_motor.set(limited() ? 0 : m_dutyCycle);
 	}
 
 	public void stop() {
 		m_motor.stopMotor();
 	}
 
+	private double minDifference(double a, double b) {
+		double difference = Math.abs(a - b);
+		return Math.min(difference, 360 - difference);
+	}
+
+	private boolean limited() {
+		double position = getPosition();
+		if (position < m_maxAngle && position > m_minAngle) {
+			return false;
+		}
+		double distanceToMax = minDifference(position, m_maxAngle);
+		double distanceToMin = minDifference(position, m_minAngle);
+		if (distanceToMin < distanceToMax) {
+			return m_dutyCycle < 0; // We overshot the minimum, no negative power
+		} else {
+			return m_dutyCycle > 0; // We overshot the maximum, no positive power
+		} // Ensure that you cannot overshoot even more after overshooting has already
+			// ocurred.
+	}
+
 	@Override
 	public void periodic() {
-		if ((m_dutyCycle > 0 && getPosition() > m_maxAngle)
-				|| (m_dutyCycle < 0 && getPosition() < m_minAngle)) {
-			stop(); // Ensure that you cannot overshoot even more after overshooting has already
-					// ocurred.
+		if (limited()) {
+			stop();
 		}
 		if (Constants.kLogging) {
 			SmartDashboard.putNumber(String.format("%s/Position", m_name), getPosition());

@@ -13,13 +13,11 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.HoodCommands;
 import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShooterCommands;
-import frc.robot.commands.TransportCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Transport;
 import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
@@ -29,12 +27,12 @@ public class Robot extends TimedRobot {
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
 			Constants.ControllerConstants.kOperatorControllerPort);
+	private final Aim m_aim = new Aim.Linear();
 
 	{
 		new Drive();
 		new Shooter();
 		new Intake();
-		new Transport();
 		Turret.create();
 		Hood.create();
 	}
@@ -57,13 +55,11 @@ public class Robot extends TimedRobot {
 		m_operatorController.triangle().toggleOnTrue(
 				new ShooterCommands.RunAtDPadRPM(this, m_operatorController.povRight(),
 						m_operatorController.povLeft()));
-		m_operatorController.povDown().onTrue(new HoodCommands.RunAtPower(-.1, 0));
-		m_operatorController.povUp().onTrue(new HoodCommands.RunAtPower(.1, 0));
-		m_operatorController.L2().whileTrue(new IntakeCommands.SpinArmPower(0.1));
-		m_operatorController.R2().whileTrue(new IntakeCommands.SpinArmPower(-0.1));
-		m_operatorController.square().onTrue(new IntakeCommands.SpinIntake(.1));
-		m_operatorController.circle().onTrue(Intake.getExtendCommand());
-		m_operatorController.cross().onTrue(Intake.getRetractCommand());
+		m_operatorController.povDown().whileTrue(new HoodCommands.RunAtPower(-.1, 0));
+		m_operatorController.povUp().whileTrue(new HoodCommands.RunAtPower(.1, 0));
+		m_operatorController.square().onTrue(new IntakeCommands.Spin(.1));
+		m_operatorController.circle().onTrue(new IntakeCommands.ExtendArmCommand());
+		m_operatorController.cross().onTrue(new IntakeCommands.RetractArmCommand());
 	}
 
 	@Override
@@ -77,7 +73,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_scheduler.cancelAll();
-		m_scheduler.schedule(Intake.getResetCommand());
+		m_scheduler.schedule(
+				Commands.parallel(
+						Commands.sequence(
+								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(225)),
+						new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
+		// m_scheduler.schedule(m_aim.getAimCommand(13.5));
 	}
 
 	@Override
