@@ -30,7 +30,7 @@ import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
 	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
-
+	private DistanceCalc distanceCalc = new DistanceCalc();
 	private final CommandPS5Controller m_driverController = new CommandPS5Controller(
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
@@ -155,7 +155,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
+		System.out.println("Running robotPeriodic...");
 		m_scheduler.run();
+		distanceCalc.processCameraResults(); // Ensure DistanceCalc is updated periodically
 		if (Constants.kLogging) {
 			SmartDashboard.putData(m_scheduler);
 		}
