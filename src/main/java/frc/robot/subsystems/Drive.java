@@ -68,12 +68,17 @@ public class Drive extends SubsystemBase {
 			.getDefault().getStructArrayTopic("/SmartDashboard/Current Swerve Modules States", SwerveModuleState.struct)
 			.publish();
 
-	private final PIDController m_orientationController = new PIDController(kRotationP, kRotationI, kRotationD);
+	private final PIDController m_orientationController = new PIDController(kP, kI, kD);
 
 	private NeutralModeValue coastMode = NeutralModeValue.Coast;
 
 	/** Creates a new DriveSubsystem. */
 	public Drive() {
+		if (s_theDrive == null) {
+			s_theDrive = this;
+		} else {
+			throw new Error("Drive already instantiated");
+		}
 		m_orientationController.enableContinuousInput(-Math.PI, Math.PI);
 		// Adjust ramp rate, step voltage, and timeout to make sure robot doesn't
 		// collide with anything
@@ -96,11 +101,6 @@ public class Drive extends SubsystemBase {
 			m_gyroSim = new SimDeviceSim("navX-Sensor", m_gyro.getPort()).getDouble("Yaw");
 		} else {
 			m_gyroSim = null;
-		}
-		if (s_theDrive == null) {
-			s_theDrive = this;
-		} else {
-			throw new Error("Drive already instantiated");
 		}
 	}
 
@@ -163,7 +163,7 @@ public class Drive extends SubsystemBase {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		speeds = ChassisSpeeds.discretize(speeds, 0.03);
 		SwerveModuleState[] states = s_theDrive.m_kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, kTeleopDriveMaxSpeed);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
 		Double[] moduleAngles = doModuleX(SwerveModule::getModuleAngle, Double[]::new);
 		for (int i = 0; i < states.length; i++) // Optimize target module states
 			states[i].optimize(Rotation2d.fromDegrees(moduleAngles[i]));
@@ -222,7 +222,7 @@ public class Drive extends SubsystemBase {
 	 */
 	public static void drive(double forwardSpeed, double strafeSpeed, double rotation, boolean isRobotRelative) {
 		setModuleStates(
-				calculateModuleStates(new ChassisSpeeds(forwardSpeed, strafeSpeed, rotation), !isRobotRelative));
+				calculateModuleStates(new ChassisSpeeds(forwardSpeed, strafeSpeed, rotation), isRobotRelative));
 	}
 
 	/**
