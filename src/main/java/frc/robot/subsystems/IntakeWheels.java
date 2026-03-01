@@ -7,11 +7,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Subsystems.IntakeConstants;
-import frc.robot.commands.IntakeCommands;
 
 public class IntakeWheels extends SubsystemBase {
 	private static IntakeWheels s_theIntake;
@@ -55,19 +52,5 @@ public class IntakeWheels extends SubsystemBase {
 
 	public static void stopWheel() {
 		s_theIntake.m_intakeWheels.stopMotor();
-	}
-
-	public static Command getResetCommand() {
-		return new SequentialCommandGroup(
-				new IntakeCommands.SpinArmPowerForTime(.4, 5),
-				new IntakeCommands.ResetEncoder());
-	}
-
-	public static Command getExtendCommand() {
-		return new IntakeCommands.MoveArmToPosition(IntakeConstants.kArmDeployRotations);
-	}
-
-	public static Command getRetractCommand() {
-		return new IntakeCommands.MoveArmToPosition(IntakeConstants.kArmRetractRotations);
 	}
 }
