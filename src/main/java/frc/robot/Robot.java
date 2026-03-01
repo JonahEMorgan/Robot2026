@@ -23,7 +23,8 @@ import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeArm;
+import frc.robot.subsystems.IntakeWheels;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -40,7 +41,7 @@ public class Robot extends TimedRobot {
 	{
 		new Drive();
 		new Shooter();
-		new Intake();
+		new IntakeWheels();
 		new Kicker();
 		new Agitator();
 		Turret.create();
@@ -70,10 +71,10 @@ public class Robot extends TimedRobot {
 		m_driverController.square().onTrue(new DriveCommands.SpinToAngle(270, 0.2));
 
 		m_driverController.R1().onTrue(
-				new SequentialCommandGroup(new IntakeCommands.MoveArmToPosition(1),
+				new SequentialCommandGroup(new IntakeCommands.MoveArmToEEEEnum(IntakeArm.Positions.Out),
 						new IntakeCommands.SpinIntake(1)));// Deploys arm TODO: tune position
 		m_driverController.L1().onTrue(
-				new SequentialCommandGroup(new IntakeCommands.MoveArmToPosition(0),
+				new SequentialCommandGroup(new IntakeCommands.MoveArmToEEEEnum(IntakeArm.Positions.In),
 						new IntakeCommands.StopIntake()));// Retracts arm and stops power TODO: tune position
 		m_driverController.povUp().whileTrue(new IntakeCommands.SpinArmPower(-.05)); // TODO: tune speed
 		m_driverController.povDown().whileTrue(new IntakeCommands.SpinArmPower(.05));

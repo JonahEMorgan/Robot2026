@@ -3,7 +3,9 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedP;
-import frc.robot.subsystems.Intake;
+import frc.robot.PositionEnumValue;
+import frc.robot.subsystems.IntakeArm;
+import frc.robot.subsystems.IntakeWheels;
 
 public class IntakeCommands {
 	public static class SpinArmPowerForTime extends Command {
@@ -12,22 +14,22 @@ public class IntakeCommands {
 		private Timer m_timer = new Timer();
 
 		public SpinArmPowerForTime(double speed, double time) {
-			setName("Spine at Power for Time");
-			addRequirements(Intake.getIntake());
+			setName("Spin at Power for Time");
+			addRequirements(IntakeWheels.getIntake(), IntakeArm.getIntakeArm());
 			m_speed = speed;
 			m_time = time;
 		}
 
 		@Override
 		public void initialize() {
-			Intake.setArmPower(m_speed);
+			IntakeArm.setMotorPower(m_speed);
 			m_timer.reset();
 			m_timer.start();
 		}
 
 		@Override
 		public void end(boolean interrupted) {
-			Intake.stopArm();
+			IntakeArm.stopMotor();
 		}
 
 		@Override
@@ -40,19 +42,19 @@ public class IntakeCommands {
 		private double m_speed;
 
 		public SpinArmPower(double speed) {
-			setName("Spine at Power for Time");
-			addRequirements(Intake.getIntake());
+			setName("Spin at Power for Time");
+			addRequirements(IntakeWheels.getIntake(), IntakeArm.getIntakeArm());
 			m_speed = speed;
 		}
 
 		@Override
 		public void initialize() {
-			Intake.setArmPower(m_speed);
+			IntakeArm.setMotorPower(m_speed);
 		}
 
 		@Override
 		public void end(boolean interrupted) {
-			Intake.stopArm();
+			IntakeArm.stopMotor();
 		}
 
 		@Override
@@ -73,21 +75,27 @@ public class IntakeCommands {
 
 		@Override
 		public void execute() {
-			double error = Intake.getArmRotations() - m_position;
+			double error = IntakeArm.getMotorRotations() - m_position;
 			double minPower = 0.1;
 			double maxPower = 1;
 			double maxError = 0.5;
-			Intake.setArmPower(ClampedP.clampedP(error, minPower, maxPower, maxError, kTolerance));
+			IntakeArm.setMotorPower(ClampedP.clampedP(error, minPower, maxPower, maxError, kTolerance));
 		}
 
 		@Override
 		public void end(boolean interrupted) {
-			Intake.stopArm();
+			IntakeArm.stopMotor();
 		}
 
 		@Override
 		public boolean isFinished() {
-			return Math.abs(m_position - Intake.getArmRotations()) <= kTolerance;
+			return Math.abs(m_position - IntakeArm.getMotorRotations()) <= kTolerance;
+		}
+	}
+
+	public static class MoveArmToEEEEnum extends MoveArmToPosition {
+		public MoveArmToEEEEnum(PositionEnumValue value) {
+			super(value.getPosition());
 		}
 	}
 
@@ -100,7 +108,7 @@ public class IntakeCommands {
 		}
 
 		public void initialize() {
-			Intake.setWheelPower(m_speed);
+			IntakeWheels.setWheelPower(m_speed);
 		}
 
 		// Update this to use limit switch instead of getArmAngle method.
@@ -109,21 +117,21 @@ public class IntakeCommands {
 		}
 
 		public void end() {
-			Intake.stopWheel();
+			IntakeWheels.stopWheel();
 		}
 	}
 
 	public static class ResetEncoder extends Command {
 		@Override
 		public void initialize() {
-			Intake.resetArmEncoder();
+			IntakeArm.resetMotorEncoder();
 		}
 	}
 
 	public static class StopIntake extends Command {
 		@Override
 		public void initialize() {
-			Intake.stopWheel();
+			IntakeWheels.stopWheel();
 		}
 
 		@Override
