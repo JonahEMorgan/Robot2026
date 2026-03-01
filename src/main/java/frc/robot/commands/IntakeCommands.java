@@ -22,14 +22,14 @@ public class IntakeCommands {
 
 		@Override
 		public void initialize() {
-			IntakeArm.setMotorPower(m_speed);
+			IntakeArm.getIntakeArm().setMotorPower(m_speed);
 			m_timer.reset();
 			m_timer.start();
 		}
 
 		@Override
 		public void end(boolean interrupted) {
-			IntakeArm.stopMotor();
+			IntakeArm.getIntakeArm().stopMotor();
 		}
 
 		@Override
@@ -49,12 +49,12 @@ public class IntakeCommands {
 
 		@Override
 		public void initialize() {
-			IntakeArm.setMotorPower(m_speed);
+			IntakeArm.getIntakeArm().setMotorPower(m_speed);
 		}
 
 		@Override
 		public void end(boolean interrupted) {
-			IntakeArm.stopMotor();
+			IntakeArm.getIntakeArm().stopMotor();
 		}
 
 		@Override
@@ -75,21 +75,21 @@ public class IntakeCommands {
 
 		@Override
 		public void execute() {
-			double error = IntakeArm.getMotorRotations() - m_position;
+			double error = IntakeArm.getIntakeArm().getMotorRotations() - m_position;
 			double minPower = 0.1;
 			double maxPower = 1;
 			double maxError = 0.5;
-			IntakeArm.setMotorPower(ClampedP.clampedP(error, minPower, maxPower, maxError, kTolerance));
+			IntakeArm.getIntakeArm().setMotorPower(ClampedP.clampedP(error, minPower, maxPower, maxError, kTolerance));
 		}
 
 		@Override
 		public void end(boolean interrupted) {
-			IntakeArm.stopMotor();
+			IntakeArm.getIntakeArm().stopMotor();
 		}
 
 		@Override
 		public boolean isFinished() {
-			return Math.abs(m_position - IntakeArm.getMotorRotations()) <= kTolerance;
+			return Math.abs(m_position - IntakeArm.getIntakeArm().getMotorRotations()) <= kTolerance;
 		}
 	}
 
@@ -124,7 +124,7 @@ public class IntakeCommands {
 	public static class ResetEncoder extends Command {
 		@Override
 		public void initialize() {
-			IntakeArm.resetMotorEncoder();
+			IntakeArm.getIntakeArm().resetMotorEncoder();
 		}
 	}
 

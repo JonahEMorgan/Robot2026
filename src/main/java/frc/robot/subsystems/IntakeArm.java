@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import frc.robot.Constants.Subsystems.IntakeConstants;
 import frc.robot.PositionEnumValue;
 
@@ -22,8 +25,18 @@ public class IntakeArm extends PositionControlSubsystem {
 
 	public static IntakeArm s_theIntakeArm;
 
+	private static final SparkMaxConfig s_config = new SparkMaxConfig();
+
+	{
+		s_config.smartCurrentLimit(IntakeConstants.kArmSmartCurrentLimit);
+		s_config.secondaryCurrentLimit(IntakeConstants.kArmSecondaryCurrentLimit);
+		s_config.idleMode(IdleMode.kBrake);
+		s_config.inverted(IntakeConstants.kArmInvert);
+		s_config.encoder.positionConversionFactor(IntakeConstants.kArmConversionFactor);
+	}
+
 	public IntakeArm() {
-		super(IntakeConstants.kIntakeArmPort);
+		super(IntakeConstants.kIntakeArmPort, s_config);
 
 		if (s_theIntakeArm == null) {
 			s_theIntakeArm = new IntakeArm();
