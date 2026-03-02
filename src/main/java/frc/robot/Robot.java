@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
 			Constants.ControllerConstants.kOperatorControllerPort);
 	private final Aim m_aim = new Aim.Linear();
+	private final VisionSubsystem m_vision = new VisionSubsystem();
 
 	{
 		new Drive();
@@ -93,6 +94,8 @@ public class Robot extends TimedRobot {
 								m_operatorController.cross(), 5.0,
 								m_operatorController.circle(), 10.0,
 								m_operatorController.triangle(), 15.0)));// TODO: Update command to be close preset
+
+		m_operatorController.create().onTrue(new AimCommands.AutoAim(m_vision)); // Auto aiming using distance
 
 		// TODO: Change command to RunForPower (no time)
 		m_operatorController.L1().toggleOnTrue(
