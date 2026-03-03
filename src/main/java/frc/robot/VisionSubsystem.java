@@ -38,6 +38,7 @@ public class VisionSubsystem extends SubsystemBase {
 							Units.inchesToMeters(23.5);
 				}
 				m_distanceToTags = sum / targets.size();
+
 				SmartDashboard.putNumber(
 						"Vision/PoseX", Units.metersToFeet(m_distanceToTags));
 			}

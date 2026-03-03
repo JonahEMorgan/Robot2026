@@ -20,12 +20,7 @@ import frc.robot.commands.IntakeCommands;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TransportCommands;
 import frc.robot.commands.TurretCommands;
-import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Kicker;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
@@ -35,21 +30,21 @@ public class Robot extends TimedRobot {
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
 			Constants.ControllerConstants.kOperatorControllerPort);
-	private final Aim m_aim = new Aim.Linear();
+	// private final Aim m_aim = new Aim.Linear();
 	private final VisionSubsystem m_vision = new VisionSubsystem();
 
-	{
-		new Drive();
-		new Shooter();
-		new Intake();
-		new Kicker();
-		new Agitator();
-		Turret.create();
-		Hood.create();
-	}
+	// {
+	// new Drive();
+	// new Shooter();
+	// new Intake();
+	// new Kicker();
+	// new Agitator();
+	// Turret.create();
+	// Hood.create();
+	// }
 
 	public Robot() {
-		bindCompControls(); // Change to bindCompControls() for competition
+		// bindCompControls(); // Change to bindCompControls() for competition
 	}
 
 	// If code had comments then it is most likely
