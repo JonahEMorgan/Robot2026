@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedP;
@@ -71,13 +72,41 @@ public class DriveCommands {
 	}
 
 	public static class TurnSteerToAngle extends Command {
+		private final double m_angle;
+		private final double m_tolerance;
+
+		public TurnSteerToAngle(double angle) {
+			m_angle = angle;
+			m_tolerance = 3; // Can be constant from command to command
+			addRequirements(Drive.getDrive());
+		}
+
+		@Override
+		public void execute() {
+			Drive.turnSteerToAngle(Rotation2d.fromDegrees(m_angle));
+		}
+
+		// Finishes when all four modules are within angle tolerance
+		@Override
+		public boolean isFinished() {
+			SwerveModulePosition[] poses = Drive.getModulePositions();
+			for (int i = 0; i < 4; i++) {
+				if (Math.abs(poses[i].angle.getDegrees() - m_angle) > m_tolerance) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	public static class RotateSteerToAngle extends Command {
 		private final Rotation2d m_angle;
 
-		public TurnSteerToAngle(double degrees) {
+		public RotateSteerToAngle(double degrees) {
 			this(Rotation2d.fromDegrees(degrees));
 		}
 
-		public TurnSteerToAngle(Rotation2d angle) {
+		public RotateSteerToAngle(Rotation2d angle) {
 			m_angle = angle;
 			setName("Turn wheels to an angle");
 			addRequirements(Drive.getDrive());
@@ -90,6 +119,8 @@ public class DriveCommands {
 
 		@Override
 		public boolean isFinished() {
+			// We don't need to check for tolerance because the modules will still move
+			// after the command ends.
 			return true;
 		}
 	}
