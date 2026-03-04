@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		// bindCompControls(); // Change to bindCompControls() for competition
+		// bindCompControls(); // Change to bindCompControls() for competition
 	}
 
 	// If code had comments then it is most likely
@@ -162,6 +163,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_scheduler.cancelAll();
+		m_scheduler.schedule(
+				Commands.parallel(
+						Commands.sequence(
+								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+								new TurretCommands.RunToAngleHardware(225)),
+						new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
+		// m_scheduler.schedule(m_aim.getAimCommand(13.5));
 		m_scheduler.schedule(
 				Commands.parallel(
 						Commands.sequence(
