@@ -106,8 +106,8 @@ public class Constants {
 		public static final double kV = 0.12;
 		public static final double kA = 0.009;
 
-		public static final double kDriveGearRatio = 6.75;
-		public static final double kSteerGearRatio = 150.0 / 7; // TODO: Change value for 5i's
+		public static final double kDriveGearRatio = 6.03;
+		public static final double kSteerGearRatio = 26;
 		public static final double kWheelDiameter = Units.inchesToMeters(4);
 		public static final double kWheelCircumference = Math.PI * kWheelDiameter;
 
@@ -127,20 +127,19 @@ public class Constants {
 		public static final TalonFXConfiguration kDriveConfig = new TalonFXConfiguration();
 		static {
 			kDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			kDriveConfig.CurrentLimits.SupplyCurrentLimit = 45; // For avoiding brownout
-			kDriveConfig.CurrentLimits.SupplyCurrentLowerLimit = 45;
-			kDriveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-			kDriveConfig.CurrentLimits.StatorCurrentLimit = 80; // Output current (proportional to acceleration)
+			kDriveConfig.CurrentLimits.StatorCurrentLimit = 70; // Higher to prevent torque loss at low speeds
 			kDriveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+			kDriveConfig.CurrentLimits.SupplyCurrentLimit = 60; // Lower to prevent brownouts at high speeds
+			kDriveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 			kDriveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 		}
 
 		public static final TalonFXConfiguration kSteerConfig = new TalonFXConfiguration();
 		static {
 			kSteerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			kSteerConfig.CurrentLimits.StatorCurrentLimit = 60;
+			kSteerConfig.CurrentLimits.StatorCurrentLimit = 50; // Higher to prevent torque loss at low speeds
 			kSteerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-			kSteerConfig.CurrentLimits.SupplyCurrentLimit = 75;
+			kSteerConfig.CurrentLimits.SupplyCurrentLimit = 40; // Lower to prevent brownouts at high speeds
 			kSteerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 			kSteerConfig.MotorOutput.Inverted = (isCompBot) ? InvertedValue.CounterClockwise_Positive
 					: InvertedValue.Clockwise_Positive;

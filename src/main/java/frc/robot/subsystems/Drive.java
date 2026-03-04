@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
@@ -15,7 +16,6 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -68,8 +67,6 @@ public class Drive extends SubsystemBase {
 			.getDefault().getStructArrayTopic("/SmartDashboard/Current Swerve Modules States", SwerveModuleState.struct)
 			.publish();
 
-	private final PIDController m_orientationController = new PIDController(kP, kI, kD);
-
 	private NeutralModeValue coastMode = NeutralModeValue.Coast;
 
 	/** Creates a new DriveSubsystem. */
@@ -79,15 +76,14 @@ public class Drive extends SubsystemBase {
 		} else {
 			throw new Error("Drive already instantiated");
 		}
-		m_orientationController.enableContinuousInput(-Math.PI, Math.PI);
 		// Adjust ramp rate, step voltage, and timeout to make sure robot doesn't
 		// collide with anything
 		m_sysidRoutine = new SysIdRoutine(
 				new SysIdRoutine.Config(Units.Volts.of(2.5).div(Units.Seconds.of(1)), null, Units.Seconds.of(3)),
 				new SysIdRoutine.Mechanism(volt -> doModuleX(
 						module -> module
-								.setModuleState(new SwerveModuleState(volt.magnitude(), new Rotation2d(Math.PI / 2))),
-						SwerveModuleState[]::new), null, this));
+								.setModuleState(new SwerveModuleState(volt.magnitude(), new Rotation2d(Math.PI / 2)))),
+						null, this));
 		m_gyro.zeroYaw();
 		resetEncoders();
 		// Wait 100 milliseconds to let all the encoders reset
@@ -121,7 +117,7 @@ public class Drive extends SubsystemBase {
 	 * Resets drive encoders to zero.
 	 */
 	private static void resetEncoders() {
-		doModuleX(SwerveModule::resetDriveEncoder, Boolean[]::new);
+		doModuleX(SwerveModule::resetDriveEncoder);
 	}
 
 	/**
@@ -147,6 +143,11 @@ public class Drive extends SubsystemBase {
 				.map(function).toArray(constructor);
 	}
 
+	private static <T> void doModuleX(Consumer<SwerveModule> function) {
+		Stream.of(s_theDrive.m_frontLeft, s_theDrive.m_frontRight, s_theDrive.m_backLeft, s_theDrive.m_backRight)
+				.forEach(function);
+	}
+
 	/**
 	 * Calculates module states from a chassis speeds.
 	 * 
@@ -164,9 +165,9 @@ public class Drive extends SubsystemBase {
 		speeds = ChassisSpeeds.discretize(speeds, 0.03);
 		SwerveModuleState[] states = s_theDrive.m_kinematics.toSwerveModuleStates(speeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
-		Double[] moduleAngles = doModuleX(SwerveModule::getModuleAngle, Double[]::new);
+		Rotation2d[] moduleAngles = doModuleX(SwerveModule::getModuleAngle, Rotation2d[]::new);
 		for (int i = 0; i < states.length; i++) // Optimize target module states
-			states[i].optimize(Rotation2d.fromDegrees(moduleAngles[i]));
+			states[i].optimize(moduleAngles[i]);
 		return states;
 	}
 
@@ -177,7 +178,7 @@ public class Drive extends SubsystemBase {
 	 */
 	private static void setModuleStates(SwerveModuleState[] states) {
 		s_theDrive.m_targetModuleStatePublisher.set(states);
-		doModuleX(module -> module.setModuleState(states[module.getIndex()]), SwerveModuleState[]::new);
+		doModuleX(module -> module.setModuleState(states[module.getIndex()]));
 	}
 
 	public static void stop() {
@@ -186,15 +187,12 @@ public class Drive extends SubsystemBase {
 
 	public static void setCoastMode(NeutralModeValue mode) {
 		s_theDrive.coastMode = mode;
-		doModuleX(module -> module.setNeutralMode(mode), NeutralModeValue[]::new);
+		doModuleX(module -> module.setNeutralMode(mode));
 	}
 
-	/**
-	 * Is invoked periodically by the {@link CommandScheduler}. Useful
-	 * for updating subsystem-specific state.
-	 */
 	@Override
 	public void periodic() {
+		doModuleX(SwerveModule::periodic);
 		SwerveModuleState[] states = doModuleX(SwerveModule::getModuleState, SwerveModuleState[]::new);
 		m_currentModuleStatePublisher.set(states);
 		var speeds = m_kinematics.toChassisSpeeds(states);
@@ -205,6 +203,9 @@ public class Drive extends SubsystemBase {
 		m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
 	}
 
+	/**
+	 * Toggles whether the drive motors coast or brake.
+	 */
 	public static void toggleCoastMode() {
 		setCoastMode(switch (s_theDrive.coastMode) {
 			case Coast -> NeutralModeValue.Brake;
@@ -213,26 +214,34 @@ public class Drive extends SubsystemBase {
 	}
 
 	/**
-	 * Method for making the robot drive using speeds
+	 * Drive the robot using speed vectors which can go in any direction.
 	 * 
 	 * @param forwardSpeed
 	 * @param strafeSpeed
 	 * @param rotation
 	 * @param isRobotRelative
 	 */
-	public static void drive(double forwardSpeed, double strafeSpeed, double rotation, boolean isRobotRelative) {
+	public static void swerveDrive(double forwardSpeed, double strafeSpeed, double rotation, boolean isRobotRelative) {
 		setModuleStates(
 				calculateModuleStates(new ChassisSpeeds(forwardSpeed, strafeSpeed, rotation), isRobotRelative));
 	}
 
 	/**
-	 * Turns all steer motors to a specified angle.
+	 * Turn all of the steer motors to the same angle.
 	 * 
-	 * @param angle The desired angle (in degrees).
+	 * @param angle the desired angle
 	 */
-	public void turnSteerToAngle(double angle) {
-		SwerveModuleState state = new SwerveModuleState(0, Rotation2d.fromDegrees(angle));
-		setModuleStates(new SwerveModuleState[] { state, state, state, state });
+	public static void turnSteerToAngle(Rotation2d angle) {
+		doModuleX(module -> module.setSteerAngle(angle));
+	}
+
+	/**
+	 * Drive all of the drive motors at the same power.
+	 * 
+	 * @param power the desired power
+	 */
+	public static void setDrivePower(double power) {
+		doModuleX(module -> module.setDrivePower(power));
 	}
 
 	/**
@@ -244,6 +253,11 @@ public class Drive extends SubsystemBase {
 		s_theDrive.m_gyro.zeroYaw();
 	}
 
+	/**
+	 * Reset the odometry to the specified pose
+	 * 
+	 * @param pose the new pose
+	 */
 	public static void resetOdometry(Pose2d pose) {
 		s_theDrive.m_odometry.resetPosition(getHeading(), getModulePositions(), pose);
 	}
