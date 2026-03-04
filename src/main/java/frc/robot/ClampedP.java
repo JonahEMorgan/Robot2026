@@ -27,6 +27,12 @@ public class ClampedP {
 		return -Math.signum(error) * power;
 	}
 
+	/**
+	 * Gets a testing command which prints out whether the ClampedP controller is
+	 * behaving properly
+	 * 
+	 * @return the command
+	 */
 	public static Command testCommand() {
 		return Commands.runOnce(() -> {
 			double minPower = 1;
