@@ -41,13 +41,13 @@ public class Drive extends SubsystemBase {
 	private static Drive s_theDrive;
 
 	private final SwerveModule m_frontLeft = new SwerveModule(0, kFrontLeftCANCoderPort, kFrontLeftDrivePort,
-			kFrontLeftSteerPort, true);
+			kFrontLeftSteerPort, kFrontLeftInverted);
 	private final SwerveModule m_frontRight = new SwerveModule(1, kFrontRightCANCoderPort, kFrontRightDrivePort,
-			kFrontRightSteerPort, false);
+			kFrontRightSteerPort, kFrontRightInverted);
 	private final SwerveModule m_backLeft = new SwerveModule(2, kBackLeftCANCoderPort, kBackLeftDrivePort,
-			kBackLeftSteerPort, true);
+			kBackLeftSteerPort, kBackLeftInverted);
 	private final SwerveModule m_backRight = new SwerveModule(3, kBackRightCANCoderPort, kBackRightDrivePort,
-			kBackRightSteerPort, false);
+			kBackRightSteerPort, kBackRightInverted);
 
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
@@ -71,11 +71,7 @@ public class Drive extends SubsystemBase {
 
 	/** Creates a new DriveSubsystem. */
 	public Drive() {
-		if (s_theDrive == null) {
-			s_theDrive = this;
-		} else {
-			throw new Error("Drive already instantiated");
-		}
+		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
 		// Adjust ramp rate, step voltage, and timeout to make sure robot doesn't
 		// collide with anything
 		m_sysidRoutine = new SysIdRoutine(
@@ -84,6 +80,16 @@ public class Drive extends SubsystemBase {
 						module -> module
 								.setModuleState(new SwerveModuleState(volt.magnitude(), new Rotation2d(Math.PI / 2)))),
 						null, this));
+		if (RobotBase.isSimulation()) {
+			m_gyroSim = new SimDeviceSim("navX-Sensor", m_gyro.getPort()).getDouble("Yaw");
+		} else {
+			m_gyroSim = null;
+		}
+		if (s_theDrive == null) {
+			s_theDrive = this;
+		} else {
+			throw new Error("Drive already instantiated");
+		}
 		m_gyro.zeroYaw();
 		resetEncoders();
 		// Wait 100 milliseconds to let all the encoders reset
@@ -92,12 +98,7 @@ public class Drive extends SubsystemBase {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
-		if (RobotBase.isSimulation()) {
-			m_gyroSim = new SimDeviceSim("navX-Sensor", m_gyro.getPort()).getDouble("Yaw");
-		} else {
-			m_gyroSim = null;
-		}
+		m_odometry.resetRotation(getHeading());
 	}
 
 	public static Drive getDrive() {
@@ -165,9 +166,6 @@ public class Drive extends SubsystemBase {
 		speeds = ChassisSpeeds.discretize(speeds, 0.03);
 		SwerveModuleState[] states = s_theDrive.m_kinematics.toSwerveModuleStates(speeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
-		Rotation2d[] moduleAngles = doModuleX(SwerveModule::getModuleAngle, Rotation2d[]::new);
-		for (int i = 0; i < states.length; i++) // Optimize target module states
-			states[i].optimize(moduleAngles[i]);
 		return states;
 	}
 

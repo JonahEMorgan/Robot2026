@@ -98,6 +98,10 @@ public class Constants {
 		public static final int kFrontLeftCANCoderPort = 42;
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
+		public static final boolean kFrontRightInverted = false;
+		public static final boolean kFrontLeftInverted = true;
+		public static final boolean kBackRightInverted = false;
+		public static final boolean kBackLeftInverted = true;
 
 		// TODO: Make sure these are tuned (can do with SysId)
 		public static final double kP = 0.01;

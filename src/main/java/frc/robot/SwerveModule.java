@@ -135,6 +135,8 @@ public class SwerveModule {
 	 *        been repurposed to contain power between -1 and 1, not velocity.
 	 */
 	public void setModuleState(SwerveModuleState state) {
+		state.cosineScale(m_currentAngle);
+		state.optimize(m_currentAngle);
 		setDrivePower(state.speedMetersPerSecond);
 		setSteerAngle(state.angle);
 	}
