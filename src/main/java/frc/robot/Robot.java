@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Drive;
@@ -85,9 +87,11 @@ public class Robot extends TimedRobot {
 		 */
 
 		m_scheduler.schedule(
-				Commands.repeatingSequence(
-						new DriveCommands.DriveDistance(1),
-						new DriveCommands.DriveDistance(-1)));
+				new SequentialCommandGroup(new DriveCommands.TurnSteerToAngle(0),
+						new WaitCommand(1),
+						new DriveCommands.TurnSteerToAngle(45),
+						new WaitCommand(1),
+						new DriveCommands.TurnSteerToAngle(0)));
 		// m_scheduler.schedule(m_aim.getAimCommand(13.5));
 	}
 

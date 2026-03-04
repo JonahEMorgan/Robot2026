@@ -226,6 +226,16 @@ public class Drive extends SubsystemBase {
 	}
 
 	/**
+	 * Turns all steer motors to a specified angle.
+	 * 
+	 * @param angle The desired angle (in degrees).
+	 */
+	public void turnSteerToAngle(double angle) {
+		SwerveModuleState state = new SwerveModuleState(0, Rotation2d.fromDegrees(angle));
+		setModuleStates(new SwerveModuleState[] { state, state, state, state });
+	}
+
+	/**
 	 * Creates a command to reset the gyro heading to zero.
 	 * 
 	 * @return A command to reset the gyro heading.

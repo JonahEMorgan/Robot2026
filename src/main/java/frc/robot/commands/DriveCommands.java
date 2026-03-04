@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedP;
 import frc.robot.subsystems.Drive;
@@ -290,6 +291,34 @@ public class DriveCommands {
 		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
+			return true;
+		}
+	}
+
+	public static class TurnSteerToAngle extends Command {
+		private final double m_angle;
+		private final double m_tolerance;
+
+		public TurnSteerToAngle(double angle) {
+			m_angle = angle;
+			m_tolerance = 3; // Can be constant from command to command
+			addRequirements(Drive.getDrive());
+		}
+
+		@Override
+		public void execute() {
+			Drive.getDrive().turnSteerToAngle(m_angle);
+		}
+
+		// Finishes when all four modules are within angle tolerance
+		@Override
+		public boolean isFinished() {
+			SwerveModulePosition[] poses = Drive.getDrive().getModulePositions();
+			for (int i = 0; i < 4; i++) {
+				if (Math.abs(poses[i].angle.getDegrees() - m_angle) > m_tolerance) {
+					return false;
+				}
+			}
 			return true;
 		}
 	}
