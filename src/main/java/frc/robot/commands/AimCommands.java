@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Aim;
 import frc.robot.Aim.ShooterState;
 import frc.robot.Constants.Subsystems.ShooterConstants;
-import frc.robot.VisionSubsystem;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 public class AimCommands {
 	public static class RiyaAiming extends Command {
@@ -132,11 +132,11 @@ public class AimCommands {
 	}
 
 	public static class AutoAim extends Command {
-		private final VisionSubsystem m_vision;
+		private final Vision m_vision;
 		private double m_distance;
 		private Aim m_aim = new Aim.Linear();
 
-		public AutoAim(VisionSubsystem vision) {
+		public AutoAim(Vision vision) {
 			m_vision = vision;
 			setName("Auto Aim Shooter and Hood");
 			addRequirements(Shooter.getShooter(), Hood.getHood());

@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class VisionSubsystem extends SubsystemBase {
+public class Vision extends SubsystemBase {
 	private final PhotonCamera m_camera;
 	private final AprilTagFieldLayout m_aprilTagFieldLayout = AprilTagFieldLayout
 			.loadField(AprilTagFields.k2026RebuiltAndymark);
@@ -22,7 +22,7 @@ public class VisionSubsystem extends SubsystemBase {
 	// private final PhotonPoseEstimator m_poseEstimator = new
 	// PhotonPoseEstimator(m_aprilTagFieldLayout, botToCam);
 
-	public VisionSubsystem() {
+	public Vision() {
 		m_camera = new PhotonCamera("TestCamLBord");
 	}
 
