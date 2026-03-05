@@ -9,9 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedP;
+import frc.robot.ScaledJoystick;
 import frc.robot.subsystems.Drive;
 
 public class DriveCommands {
@@ -29,15 +33,13 @@ public class DriveCommands {
 	 *         input
 	 */
 	public static class JoystickDrive extends Command {
-		private final DoubleSupplier m_forwardSpeed;
-		private final DoubleSupplier m_strafeSpeed;
+		private final ScaledJoystick m_joystick;
 		private final DoubleSupplier m_rotation;
 		private final BooleanSupplier m_isRobotRelative;
 
 		public JoystickDrive(DoubleSupplier forwardSpeed, DoubleSupplier strafeSpeed,
 				DoubleSupplier rotation, BooleanSupplier isRobotRelative) {
-			m_forwardSpeed = forwardSpeed;
-			m_strafeSpeed = strafeSpeed;
+			m_joystick = new ScaledJoystick(forwardSpeed, strafeSpeed, kDeadzone);
 			m_rotation = rotation;
 			m_isRobotRelative = isRobotRelative;
 			setName("Drive With Joysticks");
@@ -47,13 +49,8 @@ public class DriveCommands {
 		// Called every time the scheduler runs while the command is scheduled.
 		@Override
 		public void execute() {
-			double forwardStick = MathUtil.applyDeadband(m_forwardSpeed.getAsDouble(), kDeadzone);
-			double forwardSpeed = 2 * Math.asin(forwardStick) / Math.PI * kTeleopDriveMaxSpeed;
-			double strafeStick = MathUtil.applyDeadband(m_strafeSpeed.getAsDouble(), kDeadzone);
-			double strafeSpeed = 2 * Math.asin(strafeStick) / Math.PI * kTeleopDriveMaxSpeed;
 			double rotationStick = MathUtil.applyDeadband(m_rotation.getAsDouble(), kDeadzone);
-			double rotation = rotationStick * kTeleopTurnMaxAngularSpeed;
-			Drive.drive(forwardSpeed, strafeSpeed, rotation, m_isRobotRelative.getAsBoolean());
+			Drive.swerveDrive(m_joystick.getX(), m_joystick.getY(), rotationStick, m_isRobotRelative.getAsBoolean());
 		}
 
 		// Called once the command ends or is interrupted.
@@ -69,14 +66,98 @@ public class DriveCommands {
 		}
 	}
 
+	public static class TurnSteerToAngle extends Command {
+		private final double m_angle;
+		private final double m_tolerance;
+
+		public TurnSteerToAngle(double angle) {
+			m_angle = angle;
+			m_tolerance = 3; // Can be constant from command to command
+			addRequirements(Drive.getDrive());
+		}
+
+		@Override
+		public void execute() {
+			Drive.turnSteerToAngle(Rotation2d.fromDegrees(m_angle));
+		}
+
+		// Finishes when all four modules are within angle tolerance
+		@Override
+		public boolean isFinished() {
+			SwerveModulePosition[] poses = Drive.getModulePositions();
+			for (int i = 0; i < 4; i++) {
+				if (Math.abs(poses[i].angle.getDegrees() - m_angle) > m_tolerance) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	public static class RotateSteerToAngle extends Command {
+		private final Rotation2d m_angle;
+
+		public RotateSteerToAngle(double degrees) {
+			this(Rotation2d.fromDegrees(degrees));
+		}
+
+		public RotateSteerToAngle(Rotation2d angle) {
+			m_angle = angle;
+			setName("Turn wheels to an angle");
+			addRequirements(Drive.getDrive());
+		}
+
+		@Override
+		public void initialize() {
+			Drive.turnSteerToAngle(m_angle);
+		}
+
+		@Override
+		public boolean isFinished() {
+			// We don't need to check for tolerance because the modules will still move
+			// after the command ends.
+			return true;
+		}
+	}
+
+	public static class PowerAndTime extends Command {
+		private final Timer m_timer = new Timer();
+		private final double m_power;
+		private final double m_time;
+
+		public PowerAndTime(double power, double time) {
+			m_power = power;
+			m_time = time;
+			setName("Drive for power and time");
+			addRequirements(Drive.getDrive());
+		}
+
+		@Override
+		public void initialize() {
+			m_timer.reset();
+			m_timer.start();
+			Drive.setDrivePower(m_power);
+		}
+
+		@Override
+		public void end(boolean interrupted) {
+			Drive.setDrivePower(0);
+			m_timer.stop();
+		}
+
+		@Override
+		public boolean isFinished() {
+			return true;
+		}
+	}
+
 	public static class DriveDistance extends Command {
 		private final double m_distance;
-		private final double m_speed;
 		private Pose2d m_initialPose;
+		private static final double m_tolerance = .05; // When to stop trying!!
 
-		public DriveDistance(double distance, double speed) {
+		public DriveDistance(double distance) {
 			m_distance = distance;
-			m_speed = speed;
 			setName("Drive For A Distance");
 			addRequirements(Drive.getDrive());
 		}
@@ -88,10 +169,26 @@ public class DriveCommands {
 
 		@Override
 		public void execute() {
-			double distance = Drive.getPose().minus(m_initialPose).getTranslation().getNorm();
-			double error = distance - m_distance;
-			double speed = ClampedP.clampedP(error, 0.05, m_speed, 1, 0.01) * Math.signum(distance);
-			Drive.drive(speed, 0, 0, true);
+			Transform2d transform = Drive.getPose().minus(m_initialPose);
+			double speed, rotation;
+			{
+				double distance = transform.getTranslation().getNorm();
+				double error = (distance - Math.abs(m_distance)) * Math.signum(m_distance);
+				double minPower = .05;
+				double maxPower = .1;
+				double maxErr = .5; // When to start slowing down!!
+				speed = ClampedP.clampedP(error, minPower, maxPower, maxErr, m_tolerance);
+			}
+			{
+				double angle = transform.getTranslation().getAngle().getDegrees();
+				double error = 0 - angle;
+				double minPower = .01;
+				double maxPower = .05;
+				double maxErr = 2; // When to start slowing down!!
+				rotation = ClampedP.clampedP(error, minPower, maxPower, maxErr, m_tolerance);
+			}
+			// rotation = .03;
+			Drive.swerveDrive(speed, 0, rotation, true);
 		}
 
 		// Called once the command ends or is interrupted.
@@ -104,7 +201,7 @@ public class DriveCommands {
 		@Override
 		public boolean isFinished() {
 			double distance = Drive.getPose().minus(m_initialPose).getTranslation().getNorm();
-			return Math.abs(distance - m_distance) < 0.01;
+			return Math.abs(distance - Math.abs(m_distance)) < m_tolerance;
 		}
 
 	}
@@ -131,7 +228,7 @@ public class DriveCommands {
 			double angle = Drive.getPose().minus(m_initialPose).getRotation().getDegrees();
 			double error = angle - m_angle;
 			double speed = ClampedP.clampedP(error, 0.05, m_speed, 45, 5);
-			Drive.drive(0, 0, speed, true);
+			Drive.swerveDrive(0, 0, speed, true);
 		}
 
 		// Called once the command ends or is interrupted.
@@ -167,7 +264,7 @@ public class DriveCommands {
 			double speedX = ClampedP.clampedP(error.getX(), 0.05, m_translationSpeed, 1, 0.01);
 			double speedY = ClampedP.clampedP(error.getY(), 0.05, m_translationSpeed, 1, 0.01);
 			double speedTheta = ClampedP.clampedP(error.getRotation().getDegrees(), 0.05, m_rotationSpeed, 45, 5);
-			Drive.drive(speedX, speedY, speedTheta, false);
+			Drive.swerveDrive(speedX, speedY, speedTheta, true);
 		}
 
 		// Called once the command ends or is interrupted.
