@@ -35,19 +35,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants.BackLeft;
+import frc.robot.Constants.DriveConstants.BackRight;
+import frc.robot.Constants.DriveConstants.FrontLeft;
+import frc.robot.Constants.DriveConstants.FrontRight;
 import frc.robot.SwerveModule;
 
 public class Drive extends SubsystemBase {
 	private static Drive s_theDrive;
 
-	private final SwerveModule m_frontLeft = new SwerveModule(0, kFrontLeftCANCoderPort, kFrontLeftDrivePort,
-			kFrontLeftSteerPort, kFrontLeftInverted);
-	private final SwerveModule m_frontRight = new SwerveModule(1, kFrontRightCANCoderPort, kFrontRightDrivePort,
-			kFrontRightSteerPort, kFrontRightInverted);
-	private final SwerveModule m_backLeft = new SwerveModule(2, kBackLeftCANCoderPort, kBackLeftDrivePort,
-			kBackLeftSteerPort, kBackLeftInverted);
-	private final SwerveModule m_backRight = new SwerveModule(3, kBackRightCANCoderPort, kBackRightDrivePort,
-			kBackRightSteerPort, kBackRightInverted);
+	private final SwerveModule m_frontLeft = new SwerveModule(0, FrontLeft.kCANCoderPort, FrontLeft.kDrivePort,
+			FrontLeft.kSteerPort, FrontLeft.kInverted);
+	private final SwerveModule m_frontRight = new SwerveModule(1, FrontRight.kCANCoderPort, FrontRight.kDrivePort,
+			FrontRight.kSteerPort, FrontRight.kInverted);
+	private final SwerveModule m_backLeft = new SwerveModule(2, BackLeft.kCANCoderPort, BackLeft.kDrivePort,
+			BackLeft.kSteerPort, BackLeft.kInverted);
+	private final SwerveModule m_backRight = new SwerveModule(3, BackRight.kCANCoderPort, BackRight.kDrivePort,
+			BackRight.kSteerPort, BackRight.kInverted);
 
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);

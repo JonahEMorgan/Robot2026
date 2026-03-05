@@ -148,7 +148,7 @@ public class SwerveModule {
 	 * @return actual output power level
 	 */
 	public void setDrivePower(double power) {
-		m_driveMotor.set(ABBA.preventBrownout(power));
+		m_driveMotor.set(ABBA.preventBrownout(power) * kMaxThrottle);
 	}
 
 	/**
