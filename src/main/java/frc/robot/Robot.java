@@ -29,6 +29,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
+	public static boolean isCompBot = false;
 	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
 
 	private final CommandPS5Controller m_driverController = new CommandPS5Controller(
@@ -104,7 +105,7 @@ public class Robot extends TimedRobot {
 		Drive.getDrive().setDefaultCommand(
 				new DriveCommands.JoystickDrive(
 						() -> -m_driverController.getLeftY(), () -> -m_driverController.getLeftX(),
-						() -> m_driverController.getL2Axis() - m_driverController.getR2Axis(),
+						() -> m_driverController.getR2Axis() - m_driverController.getL2Axis(),
 						m_driverController.getHID()::getCreateButton));
 
 		m_driverController.cross().whileTrue(
@@ -164,25 +165,43 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_scheduler.cancelAll();
+		/*
+		 * m_scheduler.schedule(
+		 * Commands.parallel(
+		 * Commands.sequence(
+		 * new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+		 * new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
+		 * new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
+		 * new TurretCommands.RunToAngleHardware(225)),
+		 * new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
+		 */
+
 		m_scheduler.schedule(
-				Commands.parallel(
-						Commands.sequence(
-								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
-								new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
-								new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
-								new TurretCommands.RunToAngleHardware(225)),
-						new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
+				new SequentialCommandGroup(
+						new DriveCommands.DriveDistance(-1.5),
+						new DriveCommands.DriveDistance(1.5),
+						new DriveCommands.DriveDistance(-1.5),
+						new DriveCommands.DriveDistance(1.5),
+						new DriveCommands.DriveDistance(-1.5),
+						new DriveCommands.DriveDistance(1.5)));
+
+		// new DriveCommands.TurnSteerToAngle(0),
+		// new WaitCommand(1),
+		// new DriveCommands.TurnSteerToAngle(45),
+		// new WaitCommand(1),
+		// new DriveCommands.TurnSteerToAngle(0)));
 		// m_scheduler.schedule(m_aim.getAimCommand(13.5));
 	}
 
 	@Override
 	public void teleopInit() {
 		m_scheduler.cancelAll();
+		bindCompControls();
 	}
 
 	@Override
 	public void testInit() {
 		m_scheduler.cancelAll();
-		m_scheduler.schedule(Commands.sequence(ClampedP.testCommand(), ABBA.testBrownoutPreventionCommand()));
+		m_scheduler.schedule(Commands.sequence(ClampedP.testCommand()));
 	}
 }
