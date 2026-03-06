@@ -11,6 +11,7 @@ import frc.robot.Aim.ShooterState;
 import frc.robot.Constants.Subsystems.ShooterConstants;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 public class AimCommands {
 	public static class RiyaAiming extends Command {
@@ -113,6 +114,41 @@ public class AimCommands {
 					m_distance = m_distances[i];
 				}
 			}
+			ShooterState state = m_aim.getShooterState(m_distance, 0);
+			Shooter.setRPM(state.shooterVelocity());
+			Hood.getHood().setAngle(state.hoodAngle());
+		}
+
+		@Override
+		public void end(boolean interrupted) {
+			Shooter.stop();
+			Hood.getHood().stop();
+		}
+
+		@Override
+		public boolean isFinished() {
+			return false;
+		}
+	}
+
+	public static class AutoAim extends Command {
+		private final Vision m_vision;
+		private double m_distance;
+		private Aim m_aim = new Aim.Linear();
+
+		public AutoAim(Vision vision) {
+			m_vision = vision;
+			setName("Auto Aim Shooter and Hood");
+			addRequirements(Shooter.getShooter(), Hood.getHood());
+		}
+
+		public void setAim(Aim aim) {
+			m_aim = aim;
+		}
+
+		@Override
+		public void execute() {
+			m_distance = m_vision.getDistanceToHub();
 			ShooterState state = m_aim.getShooterState(m_distance, 0);
 			Shooter.setRPM(state.shooterVelocity());
 			Hood.getHood().setAngle(state.hoodAngle());
