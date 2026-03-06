@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Subsystems.ClimberConstants;
 import frc.robot.Constants.Subsystems.IntakeConstants;
-import frc.robot.commands.PositionControlCommands;
+import frc.robot.commands.ClimberCommands;
 
 public class Climber extends PositionControlSubsystem {
-
-	public static Climber s_theClimber;
+	private static Climber s_theClimber;
+	private static final ClimberCommands s_commands = new ClimberCommands();
 
 	public Climber() {
 		super(ClimberConstants.kClimberPort);
@@ -43,17 +43,17 @@ public class Climber extends PositionControlSubsystem {
 
 	public static Command getZeroCommand() { // TODO: Find actual power and time needed
 		return new SequentialCommandGroup(
-				new PositionControlCommands.SpinMotorPowerForTime(s_theClimber, -.3, 5),
-				new PositionControlCommands.ResetEncoder());
+				s_commands.new SpinMotorPowerForTime(s_theClimber, -.3, 5),
+				s_commands.new ResetEncoder(s_theClimber));
 	}
 
 	public static Command getClimbCommand() {
-		return new PositionControlCommands.MoveMotorToPosition(s_theClimber, ClimberConstants.kClimbPosition, 0.1, 0.5,
+		return s_commands.new MoveMotorToPosition(s_theClimber, ClimberConstants.kClimbPosition, 0.1, 0.5,
 				0.5, 0.125, false);
 	}
 
 	public static Command getRetractCommand() {
-		return new PositionControlCommands.MoveMotorToPosition(s_theClimber, ClimberConstants.kRetractPosition, 0.1,
+		return s_commands.new MoveMotorToPosition(s_theClimber, ClimberConstants.kRetractPosition, 0.1,
 				0.5, 0.5, 0.125, false);
 	}
 }

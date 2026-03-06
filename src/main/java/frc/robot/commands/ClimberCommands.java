@@ -5,37 +5,26 @@ import static frc.robot.Constants.Subsystems.ClimberConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 
-public class ClimberCommands {
-	/*
-	 * You should consider using the more terse Command factories API instead
-	 * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-
-	 * command-based.html#defining-commands
-	 */
-
+public class ClimberCommands extends PositionControlCommands<Climber> {
 	public static class RunAtPower extends Command {
-
 		private double m_power;
 
-		/** Creates a new runShooter. */
 		public RunAtPower(double power) {
 			setName("Run Climber At Power");
 			m_power = power;
 			addRequirements(Climber.getClimber());
 		}
 
-		// Called every time the scheduler runs while the command is scheduled.
 		@Override
-		public void execute() {
+		public void initialize() {
 			Climber.getClimber().setMotorPower(m_power);
 		}
 
-		// Called once the command ends or is interrupted.
 		@Override
 		public void end(boolean interrupted) {
 			Climber.getClimber().stopMotor();
 		}
 
-		// Returns true when the command should end.
 		@Override
 		public boolean isFinished() {
 			return false;
@@ -43,24 +32,31 @@ public class ClimberCommands {
 	}
 
 	public static class RunToHeightSoftware extends Command {
-		private double m_height;
-		private double m_revolutions;
+		private final double m_revolutions;
+		private final Climber m_climber;
+		private final static double tolerance = 0.1;
+		private final static double speed = 0.1;
 
 		public RunToHeightSoftware(double height) {
 			setName("Run Climber to Height");
-			m_height = height;
-			m_revolutions = m_height * kGearRatio;
-			addRequirements(Climber.getClimber());
+			m_revolutions = height * kGearRatio;
+			m_climber = Climber.getClimber();
+			addRequirements(m_climber);
 		}
 
-		public void execute() {
+		@Override
+		public void initialize() {
+			m_climber.setMotorPower(m_climber.getMotorRotations() < m_revolutions ? speed : -speed);
 		}
 
+		@Override
 		public void end(boolean interrupted) {
+			m_climber.stopMotor();
 		}
 
+		@Override
 		public boolean isFinished() {
-			return false;
+			return Math.abs(m_climber.getMotorRotations() - m_revolutions) < tolerance;
 		}
 	}
 }

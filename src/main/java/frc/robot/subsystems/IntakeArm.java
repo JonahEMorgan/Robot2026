@@ -7,11 +7,11 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.Subsystems.IntakeConstants;
-import frc.robot.commands.PositionControlCommands;
+import frc.robot.commands.IntakeCommands;
 
 public class IntakeArm extends PositionControlSubsystem {
-
-	public static IntakeArm s_theIntakeArm;
+	private static IntakeArm s_theIntakeArm;
+	private static final IntakeCommands s_commands = new IntakeCommands();
 
 	public IntakeArm() {
 		super(IntakeConstants.kIntakeArmPort);
@@ -42,17 +42,17 @@ public class IntakeArm extends PositionControlSubsystem {
 
 	public static Command getZeroCommand() { // TODO: Find actual power and time needed
 		return new SequentialCommandGroup(
-				new PositionControlCommands.SpinMotorPowerForTime(s_theIntakeArm, -.3, 5),
-				new PositionControlCommands.ResetEncoder());
+				s_commands.new SpinMotorPowerForTime(s_theIntakeArm, -.3, 5),
+				s_commands.new ResetEncoder(s_theIntakeArm));
 	}
 
 	public static Command getOutCommand() {
-		return new PositionControlCommands.MoveMotorToPosition(s_theIntakeArm, IntakeConstants.kInPosition, 0.1, 0.7,
+		return s_commands.new MoveMotorToPosition(s_theIntakeArm, IntakeConstants.kInPosition, 0.1, 0.7,
 				0.5, 0.125, false);
 	}
 
 	public static Command getInCommand() {
-		return new PositionControlCommands.MoveMotorToPosition(s_theIntakeArm, IntakeConstants.kOutPosition, 0.1, 0.7,
+		return s_commands.new MoveMotorToPosition(s_theIntakeArm, IntakeConstants.kOutPosition, 0.1, 0.7,
 				0.5, 0.125, false);
 	}
 }
