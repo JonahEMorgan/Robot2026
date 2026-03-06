@@ -8,6 +8,7 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -29,16 +30,17 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
 
 public class Robot extends TimedRobot {
-	public static boolean isCompBot = false;
 	private CommandScheduler m_scheduler = CommandScheduler.getInstance();
 
+	public static final boolean compControls = true;
 	private final CommandPS5Controller m_driverController = new CommandPS5Controller(
 			Constants.ControllerConstants.kDriverControllerPort);
 	private final CommandPS5Controller m_operatorController = new CommandPS5Controller(
 			Constants.ControllerConstants.kOperatorControllerPort);
 	private final Aim m_aim = new Aim.Linear();
+	private final Command m_auto;
 
-	{
+	{ // Here are the individual subsystems
 		new Drive();
 		new Shooter();
 		new Intake();
@@ -48,8 +50,14 @@ public class Robot extends TimedRobot {
 		Hood.create();
 	}
 
-	public Robot() {
-		bindCompControls(); // Change to bindCompControls() for competition
+	{ // Here is the auto currently being run
+		m_auto = new SequentialCommandGroup(
+				new DriveCommands.DriveDistance(-1.5),
+				new DriveCommands.DriveDistance(1.5),
+				new DriveCommands.DriveDistance(-1.5),
+				new DriveCommands.DriveDistance(1.5),
+				new DriveCommands.DriveDistance(-1.5),
+				new DriveCommands.DriveDistance(1.5));
 	}
 
 	// If code had comments then it is most likely
@@ -165,38 +173,17 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		m_scheduler.cancelAll();
-		/*
-		 * m_scheduler.schedule(
-		 * Commands.parallel(
-		 * Commands.sequence(
-		 * new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
-		 * new TurretCommands.RunToAngleHardware(225), Commands.waitSeconds(1),
-		 * new TurretCommands.RunToAngleHardware(45), Commands.waitSeconds(1),
-		 * new TurretCommands.RunToAngleHardware(225)),
-		 * new ShooterCommands.RunAtDynamicRPM(2400).withTimeout(40)));
-		 */
-
-		m_scheduler.schedule(
-				new SequentialCommandGroup(
-						new DriveCommands.DriveDistance(-1.5),
-						new DriveCommands.DriveDistance(1.5),
-						new DriveCommands.DriveDistance(-1.5),
-						new DriveCommands.DriveDistance(1.5),
-						new DriveCommands.DriveDistance(-1.5),
-						new DriveCommands.DriveDistance(1.5)));
-
-		// new DriveCommands.TurnSteerToAngle(0),
-		// new WaitCommand(1),
-		// new DriveCommands.TurnSteerToAngle(45),
-		// new WaitCommand(1),
-		// new DriveCommands.TurnSteerToAngle(0)));
-		// m_scheduler.schedule(m_aim.getAimCommand(13.5));
+		m_scheduler.schedule(m_auto);
 	}
 
 	@Override
 	public void teleopInit() {
 		m_scheduler.cancelAll();
-		bindCompControls();
+		if (compControls) {
+			bindCompControls();
+		} else {
+			bindTestControls();
+		}
 	}
 
 	@Override

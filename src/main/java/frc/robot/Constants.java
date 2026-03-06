@@ -1,7 +1,5 @@
 package frc.robot;
 
-import static frc.robot.Robot.*;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -10,6 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
+	public static final boolean kCompBot = false;
 	public static final boolean kLogging = true;
 
 	public static final class Subsystems {
@@ -143,7 +142,7 @@ public class Constants {
 			kSteerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 			kSteerConfig.CurrentLimits.SupplyCurrentLimit = 75;
 			kSteerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-			kSteerConfig.MotorOutput.Inverted = (isCompBot) ? InvertedValue.CounterClockwise_Positive
+			kSteerConfig.MotorOutput.Inverted = (kCompBot) ? InvertedValue.CounterClockwise_Positive
 					: InvertedValue.Clockwise_Positive;
 		}
 	}
