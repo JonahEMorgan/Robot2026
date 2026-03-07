@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.commands.AimCommands;
+import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.HoodCommands;
 import frc.robot.commands.IntakeCommands;
@@ -22,9 +23,11 @@ import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TransportCommands;
 import frc.robot.commands.TurretCommands;
 import frc.robot.subsystems.Agitator;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeArm;
+import frc.robot.subsystems.IntakeWheels;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Turret;
@@ -43,7 +46,9 @@ public class Robot extends TimedRobot {
 	{ // Here are the individual subsystems
 		new Drive();
 		new Shooter();
-		new Intake();
+		new IntakeWheels();
+		new IntakeArm();
+		new Climber();
 		new Kicker();
 		new Agitator();
 		Turret.create();
@@ -58,6 +63,8 @@ public class Robot extends TimedRobot {
 				new DriveCommands.DriveDistance(1.5),
 				new DriveCommands.DriveDistance(-1.5),
 				new DriveCommands.DriveDistance(1.5));
+	public Robot() {
+		bindTestControls(); // Change to bindCompControls() for competition
 	}
 
 	// If code had comments then it is most likely
@@ -79,17 +86,15 @@ public class Robot extends TimedRobot {
 		m_driverController.square().onTrue(new DriveCommands.SpinToAngle(270, 0.2));
 
 		m_driverController.R1().onTrue(
-				new SequentialCommandGroup(new IntakeCommands.MoveArmToPosition(1),
-						new IntakeCommands.SpinIntake(1)));// Deploys arm TODO: tune position
+				new SequentialCommandGroup(IntakeCommands.getOutCommand(),
+						new IntakeCommands.SpinIntake(.5)));// Deploys arm TODO: tune position
 		m_driverController.L1().onTrue(
-				new SequentialCommandGroup(new IntakeCommands.MoveArmToPosition(0),
+				new SequentialCommandGroup(IntakeCommands.getInCommand(),
 						new IntakeCommands.StopIntake()));// Retracts arm and stops power TODO: tune position
-		m_driverController.povUp().whileTrue(new IntakeCommands.SpinArmPower(-.05)); // TODO: tune speed
-		m_driverController.povDown().whileTrue(new IntakeCommands.SpinArmPower(.05));
 		// TODO: Intake move up/down? Talk to drive team about bindings for these
 
-		m_driverController.povUp().whileTrue(null); // TODO: add climber commands
-		m_driverController.povDown().whileTrue(null);
+		m_driverController.povUp().whileTrue(ClimberCommands.getClimbCommand()); // TODO: add climber commands
+		m_driverController.povDown().whileTrue(ClimberCommands.getRetractCommand());
 
 		// *************** OPERATOR BINDINGS ***************
 
@@ -105,8 +110,8 @@ public class Robot extends TimedRobot {
 
 		// TODO: Change command to RunForPower (no time)
 		m_operatorController.L1().toggleOnTrue(
-				new ParallelCommandGroup(new TransportCommands.RunKickerAtPower(.2, 5),
-						new ParallelCommandGroup(new TransportCommands.RunAgitatorAtPower(.2, 5))));
+				new ParallelCommandGroup(new TransportCommands.RunKickerAtPowerAndTime(.2, 5),
+						new ParallelCommandGroup(new TransportCommands.RunAgitatorAtPowerAndTime(.2, 5))));
 	}
 
 	private void bindTestControls() {
@@ -118,12 +123,10 @@ public class Robot extends TimedRobot {
 
 		m_driverController.cross().whileTrue(
 				new TransportCommands.RunAgitatorAtPower(
-						0.2, /* POWER */
-						1)); /* TIME */
+						-0.6 /* POWER */));
 		m_driverController.square().whileTrue(
 				new TransportCommands.RunKickerAtPower(
-						0.2, /* POWER */
-						1)); /* TIME */
+						0.6 /* POWER */));
 
 		Turret.getTurret().setDefaultCommand(
 				new TurretCommands.RunToAngleHardwareSignal(m_operatorController::getLeftX,
@@ -150,15 +153,18 @@ public class Robot extends TimedRobot {
 						.1, /* POWER */
 						0)); /* TIME */
 
-		m_operatorController.square().onTrue(
-				new IntakeCommands.SpinIntake(
-						.1)); /* POWER */
-		m_operatorController.circle().onTrue(
-				new IntakeCommands.MoveArmToPosition( // TODO: Turn this into an enum and tune position value
-						1)); /* POSITION */
-		m_operatorController.cross().onTrue(
-				new IntakeCommands.MoveArmToPosition(
-						0)); /* POSITION */
+		{ // climber test bindings
+			m_driverController.triangle().onTrue(ClimberCommands.getRunAtPowerCommand(.6));
+			m_driverController.circle().onTrue(ClimberCommands.getRunAtPowerCommand(-0.6));
+		}
+
+		{ // intake test bindings
+			m_operatorController.circle().whileTrue(IntakeCommands.getRunArmAtPowerCommand(0.2));
+			m_operatorController.cross().whileTrue(IntakeCommands.getRunArmAtPowerCommand(-0.2));
+			m_operatorController.square().toggleOnTrue(
+					new IntakeCommands.SpinIntake(
+							-.5)); /* POWER */
+		}
 
 	}
 
