@@ -66,8 +66,8 @@ public class Constants {
 			public static final boolean kArmInvert = false;
 
 			public static final double kArmPower = 0.5;
-			public static final double kArmRetractRotations = 0;
-			public static final double kArmDeployRotations = 3;
+			public static final double kArmRetractRotations = 170;
+			public static final double kArmDeployRotations = 0;
 
 			public static final double kOutPosition = 8; // TODO: Find actual positions
 			public static final double kInPosition = 0;
@@ -76,8 +76,11 @@ public class Constants {
 
 		public static final class TransportConstants {
 			public static final int kKickerPort = 56;
+			public static final int kKickerSmartCurrentLimit = 10;
+			public static final int kKickerSecondaryCurrentLimit = 20;
 			public static final int kAgitatorPort = 57;
-			public static final int kCurrentLimit = 15;
+			public static final int kAgitatorSmartCurrentLimit = 20;
+			public static final int kAgitatorSecondaryCurrentLimit = 30;
 		}
 
 		public static final class ClimberConstants {
@@ -86,8 +89,8 @@ public class Constants {
 			public static final int kSecondaryCurrentLimit = 40;
 			public static final boolean kInvert = false;
 			public static final double kGearRatio = 81.0 / 1.0;
-			public static final double kClimbPosition = 8; // TODO: Find actual positions
-			public static final double kRetractPosition = 6;
+			public static final double kClimbPosition = 27744; // TODO: Find actual positions
+			public static final double kRetractPosition = 0;
 			public static final double kP = 0.2;
 		}
 	}

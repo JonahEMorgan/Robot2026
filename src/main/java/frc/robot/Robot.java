@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public Robot() {
-		bindCompControls(); // Change to bindCompControls() for competition
+		bindTestControls(); // Change to bindCompControls() for competition
 	}
 
 	// If code had comments then it is most likely
@@ -82,8 +82,8 @@ public class Robot extends TimedRobot {
 						new IntakeCommands.StopIntake()));// Retracts arm and stops power TODO: tune position
 		// TODO: Intake move up/down? Talk to drive team about bindings for these
 
-		m_driverController.povUp().whileTrue(null); // TODO: add climber commands
-		m_driverController.povDown().whileTrue(null);
+		m_driverController.povUp().whileTrue(ClimberCommands.getClimbCommand()); // TODO: add climber commands
+		m_driverController.povDown().whileTrue(ClimberCommands.getRetractCommand());
 
 		// *************** OPERATOR BINDINGS ***************
 
@@ -99,8 +99,8 @@ public class Robot extends TimedRobot {
 
 		// TODO: Change command to RunForPower (no time)
 		m_operatorController.L1().toggleOnTrue(
-				new ParallelCommandGroup(new TransportCommands.RunKickerAtPower(.2, 5),
-						new ParallelCommandGroup(new TransportCommands.RunAgitatorAtPower(.2, 5))));
+				new ParallelCommandGroup(new TransportCommands.RunKickerAtPowerAndTime(.2, 5),
+						new ParallelCommandGroup(new TransportCommands.RunAgitatorAtPowerAndTime(.2, 5))));
 	}
 
 	private void bindTestControls() {
@@ -112,12 +112,10 @@ public class Robot extends TimedRobot {
 
 		m_driverController.cross().whileTrue(
 				new TransportCommands.RunAgitatorAtPower(
-						0.2, /* POWER */
-						1)); /* TIME */
+						-0.6 /* POWER */));
 		m_driverController.square().whileTrue(
 				new TransportCommands.RunKickerAtPower(
-						0.2, /* POWER */
-						1)); /* TIME */
+						0.6 /* POWER */));
 
 		Turret.getTurret().setDefaultCommand(
 				new TurretCommands.RunToAngleHardwareSignal(m_operatorController::getLeftX,
@@ -145,8 +143,8 @@ public class Robot extends TimedRobot {
 						0)); /* TIME */
 
 		{ // climber test bindings
-			m_driverController.triangle().onTrue(ClimberCommands.getRunAtPowerCommand(.2));
-			m_driverController.circle().onTrue(ClimberCommands.getRunAtPowerCommand(-0.2));
+			m_driverController.triangle().onTrue(ClimberCommands.getRunAtPowerCommand(.6));
+			m_driverController.circle().onTrue(ClimberCommands.getRunAtPowerCommand(-0.6));
 		}
 
 		{ // intake test bindings
@@ -154,7 +152,7 @@ public class Robot extends TimedRobot {
 			m_operatorController.cross().whileTrue(IntakeCommands.getRunArmAtPowerCommand(-0.2));
 			m_operatorController.square().toggleOnTrue(
 					new IntakeCommands.SpinIntake(
-							-1)); /* POWER */
+							-.5)); /* POWER */
 		}
 
 	}
